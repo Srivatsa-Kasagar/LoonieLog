@@ -1,111 +1,112 @@
 # 🍁 LoonieLog
 
-**AI-powered expense tracking for Canadian freelancers — built inside Google Sheets.**
+### AI-powered receipt tracking for Canadian freelancers — built inside Google Sheets.
 
-> 🌐 **[loonielog.ca](https://srivatsa-kasagar.github.io/LoonieLog)** — full demo, features, and pricing
+> Stop losing receipts. Stop missing deductions. Stop paying your accountant to sort through your Gmail.
 
-LoonieLog is a Google Sheets add-on that acts as a mini AI agent. It hunts receipts from your Gmail and Google Drive, extracts CRA T2125 data using AI, applies Canadian tax rules automatically, and logs everything to a spreadsheet — while you sleep.
+**[→ Get Started Free](https://docs.google.com/spreadsheets/d/1VCnk8SgKQVFiGO0kbTxlBA12fgF8Z8Ujlzx-2SWnmAI/copy)** · **[Full Demo & Pricing](https://srivatsa-kasagar.github.io/LoonieLog)**
+
+---
+
+## The problem it solves
+
+If you're a Canadian freelancer, every tax season looks something like this:
+
+- Digging through 12 months of Gmail for Uber Eats and AWS receipts
+- Googling "is this GST or HST" for the 40th time
+- Guessing which T2125 line an Adobe subscription goes on
+- Wondering if you actually claimed everything you were entitled to
+
+LoonieLog is an AI agent that lives inside your Google Sheets. It hunts your receipts, applies CRA rules automatically, and logs everything — while you sleep.
 
 ---
 
 ## What it does
 
-- **Hunts receipts** — scans your Gmail `To_Log` label and a Drive folder for new receipts
-- **Extracts structured data** — vendor, date, subtotal, GST/HST, PST/QST, total, currency
-- **Applies CRA T2125 rules** — maps every expense to the correct line code (8523 Meals, 9270 SaaS, 9281 Motor Vehicle, etc.)
-- **Calculates deductions** — 50% meals rule, ITC eligibility, PST non-recoverability by province
-- **Converts USD → CAD** — uses Bank of Canada Valet API rates, audit-proof for CRA
-- **Flags ambiguous expenses** — routes low-confidence receipts to a Needs Review tab
-- **Runs automatically** — daily trigger at 2am, or run manually from the menu
+| | |
+|---|---|
+| 📬 **Hunts receipts** | Scans your Gmail `To_Log` label and a Drive folder for new receipts — automatically |
+| 🤖 **Extracts structured data** | Vendor, date, subtotal, GST/HST, PST/QST, total, currency — using AI |
+| 🇨🇦 **Applies CRA T2125 rules** | Maps every expense to the correct line code: 8523 Meals, 9270 SaaS, 9281 Motor Vehicle… |
+| 💸 **Calculates deductions** | 50% meals rule, ITC eligibility, PST non-recoverability — by province |
+| 💱 **Converts USD → CAD** | Uses Bank of Canada Valet API rates — audit-proof for CRA |
+| 🚩 **Flags ambiguous expenses** | Low-confidence receipts go to a Needs Review tab — nothing slips through |
+| ⏰ **Runs automatically** | Daily trigger at 2am, or kick it off manually from the menu |
 
 ---
 
-## Who it's for
+## Setup in 2 minutes
 
-Canadian sole proprietors and freelancers who:
-- Receive receipts by email (Uber Eats, AWS, Slack, Shopify, Starbucks…)
-- Drop PDFs and images into a Drive folder
-- File a T2125 (Statement of Business Activities) each year
-- Are tired of losing receipts or missing deductions
+> No Marketplace listing yet — install via Google Sheets copy link.
 
----
-
-## How to install
-
-> **No Marketplace listing yet** — install via Google Sheets copy link.
-
-1. Click **[Copy to Google Sheets — Free](https://docs.google.com/spreadsheets/d/1VCnk8SgKQVFiGO0kbTxlBA12fgF8Z8Ujlzx-2SWnmAI/copy)**
-2. Google will ask you to make a copy → confirm
-3. Open your new sheet → click **🚀 LoonieLog** in the menu bar
-4. Click **⚙️ Initialize Agent** and follow the 3-step setup:
+1. **[Copy to Google Sheets — Free →](https://docs.google.com/spreadsheets/d/1VCnk8SgKQVFiGO0kbTxlBA12fgF8Z8Ujlzx-2SWnmAI/copy)**
+2. Open your new sheet → click **🚀 LoonieLog** in the menu bar
+3. Click **⚙️ Initialize Agent** and follow the 3-step setup:
    - Choose your AI model (Gemini 2.5 Flash — free, or Claude Sonnet 4.6)
    - Enter your API key
    - Select your province
-5. Done — your first scan runs at 2am, or click **▶️ Run Now**
+4. Done. Your first scan runs at 2am, or click **▶️ Run Now**
 
 ---
 
-## Sheet tabs
+## Your data stays yours
+
+- Everything lives in **your** Google Sheet and Drive — no external database
+- AI providers receive only receipt content — no names, account numbers, or identifiers
+- API keys stored in Google's encrypted `PropertiesService` — never in the sheet
+- Full details: [Privacy Policy](https://srivatsa-kasagar.github.io/LoonieLog/privacy.html)
+
+---
+
+## What's inside the sheet
 
 | Tab | What's in it |
 |---|---|
 | **Expenses** | Every processed receipt — 19 columns, auto-formatted |
-| **Needs Review** | Low-confidence or ambiguous receipts — flagged for your attention |
+| **Needs Review** | Low-confidence or ambiguous receipts flagged for your attention |
 | **Summary** | YTD T2125 filing totals + category breakdown + current month snapshot |
 | **Audit Log** | Append-only log of every action the agent takes |
 | **Settings** | Your current config — AI model, province, last run time |
 
+All monetary values stored in **CAD**. USD receipts converted at the Bank of Canada rate for the receipt date.
+
 ---
 
-## Expense columns
+## CRA T2125 categories covered
 
-All monetary values are stored in **CAD**. USD receipts are converted at the Bank of Canada rate for the receipt date.
+`8521 Advertising · 8523 Meals & Entertainment · 8710 Interest & Bank Charges · 8810 Office Expenses · 8860 Professional Fees · 8910 Rent · 9200 Travel · 9220 Telephone & Utilities · 9270 Other Business Expenses · 9281 Motor Vehicle · 9936 CCA · WFH Home Office`
 
-`Date · Vendor · CRA Code · CRA Category · Subtotal · GST/HST · PST/QST · Total · Deductible · ITC Eligible · Currency · Expense Type · Source · Drive URL · Logged At · Status · Original USD · BOC Rate · Rate Date`
+All 13 Canadian provinces — correct GST, HST, PST, QST rates applied automatically.
 
 ---
 
 ## AI models supported
 
-| Model | Cost | Setup |
+| Model | Cost | Notes |
 |---|---|---|
-| **Gemini 2.5 Flash** | Free tier available | [Get API key ↗](https://aistudio.google.com/app/apikey) |
-| **Claude Sonnet 4.6** | Pay-per-use | [Get API key ↗](https://console.anthropic.com/account/keys) |
-
-Your API key is stored in Google's `PropertiesService` — never in the sheet, never transmitted anywhere except the AI provider you choose.
-
----
-
-## Pricing
-
-**Free to get started** — no credit card, no signup, works with your existing Google account.
-
-Paid plans available for higher volumes. → **[See pricing](https://srivatsa-kasagar.github.io/LoonieLog/#pricing)**
-
----
-
-## Privacy
-
-- Your receipt data never leaves your Google account
-- AI providers (Google / Anthropic) receive only the receipt content — no names, account numbers, or personal identifiers beyond what's on the receipt itself
-- No external database — everything lives in your own Google Sheet and Drive
-- Full details: [Privacy Policy](https://srivatsa-kasagar.github.io/LoonieLog/privacy.html)
+| **Gemini 2.5 Flash** | Free tier available | Recommended for most users |
+| **Claude Sonnet 4.6** | Pay-per-use | Higher accuracy on complex receipts |
 
 ---
 
 ## Tech stack
 
-- **Runtime:** Google Apps Script (V8) — no Node.js, no npm, no external dependencies
-- **AI:** Gemini 2.5 Flash via Google AI API · Claude Sonnet 4.6 via Anthropic API
-- **FX rates:** Bank of Canada Valet API — free, no auth, CRA-accepted
-- **Storage:** Google Sheets + Google Drive + Apps Script PropertiesService
-- **Hosting:** GitHub Pages (landing page)
+```
+Runtime   → Google Apps Script (V8) — no Node.js, no npm, no external deps
+AI        → Gemini 2.5 Flash (Google AI) · Claude Sonnet 4.6 (Anthropic)
+FX rates  → Bank of Canada Valet API — free, CRA-accepted
+Storage   → Google Sheets + Drive + Apps Script PropertiesService
+Hosting   → GitHub Pages (this landing page)
+```
 
 ---
 
-## Provinces supported
+## Pricing
 
-All 13 Canadian provinces and territories — correct GST, HST, PST, QST rates applied automatically based on your province setting.
+**Free to start** — no credit card, no signup, works with your existing Google account.
+
+Paid plans available for higher volumes and upcoming managed hosting.
+→ [See pricing](https://srivatsa-kasagar.github.io/LoonieLog/#pricing)
 
 ---
 
@@ -115,14 +116,13 @@ All 13 Canadian provinces and territories — correct GST, HST, PST, QST rates a
 - [x] Google Drive PDF/image scanning
 - [x] Gemini 2.5 Flash + Claude Sonnet 4.6 support
 - [x] USD → CAD conversion (Bank of Canada rates)
-- [x] CRA T2125 category mapping (all provinces)
-- [x] ITC calculation
+- [x] CRA T2125 category mapping (all 13 provinces)
+- [x] ITC + GST/HST calculation
 - [x] License key activation
-- [x] Tier-based receipt limits
-- [ ] Stripe billing (Core DIY — coming soon)
+- [ ] Stripe billing (coming soon)
 - [ ] Google Workspace Marketplace listing
-- [ ] Managed Pro (no API key required)
-- [ ] One-click audit ZIP for accountant
+- [ ] Managed Pro — no API key required
+- [ ] One-click audit ZIP for your accountant
 
 ---
 
