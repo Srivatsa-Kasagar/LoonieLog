@@ -80,7 +80,7 @@ Your API key is stored in Google's `PropertiesService` — never in the sheet, n
 
 **Free to get started** — no credit card, no signup, works with your existing Google account.
 
-Paid plans available for higher volumes. → **[See pricing at loonielog.ca](https://srivatsa-kasagar.github.io/LoonieLog/#pricing)**
+Paid plans available for higher volumes. → **[See pricing](https://srivatsa-kasagar.github.io/LoonieLog/#pricing)**
 
 ---
 
@@ -89,7 +89,7 @@ Paid plans available for higher volumes. → **[See pricing at loonielog.ca](htt
 - Your receipt data never leaves your Google account
 - AI providers (Google / Anthropic) receive only the receipt content — no names, account numbers, or personal identifiers beyond what's on the receipt itself
 - No external database — everything lives in your own Google Sheet and Drive
-- Full details: [loonielog.ca/privacy.html](https://srivatsa-kasagar.github.io/LoonieLog/privacy.html)
+- Full details: [Privacy Policy](https://srivatsa-kasagar.github.io/LoonieLog/privacy.html)
 
 ---
 
@@ -99,7 +99,7 @@ Paid plans available for higher volumes. → **[See pricing at loonielog.ca](htt
 - **AI:** Gemini 2.5 Flash via Google AI API · Claude Sonnet 4.6 via Anthropic API
 - **FX rates:** Bank of Canada Valet API — free, no auth, CRA-accepted
 - **Storage:** Google Sheets + Google Drive + Apps Script PropertiesService
-- **Hosting:** Netlify (landing page)
+- **Hosting:** GitHub Pages (landing page)
 
 ---
 
