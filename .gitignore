@@ -4,4 +4,14 @@ CLAUDE.md
 HLD.md
 CODE_PROMPT.md
 PROGRESS.md
+TESTING.md
 license-server/
+# Apps Script source — lives in the Google Apps Script project
+*.gs
+appsscript.json
+# Internal add-on HTML (not public-facing)
+Sidebar.html
+Dashboard.html
+Settings.html
+ActivateLicense.html
+UpgradePrompt.html
