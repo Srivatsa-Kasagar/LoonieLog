@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="LoonieLog Terms of Service — the terms governing your use of the LoonieLog AI expense agent for Google Sheets.">
+  <title>Terms of Service — LoonieLog</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+:root {
+  --bg:     #030712;
+  --bg-1:   #080f1f;
+  --bg-card:rgba(255,255,255,0.032);
+  --border: rgba(255,255,255,0.07);
+  --border-md: rgba(255,255,255,0.11);
+  --green:  #00dc82;
+  --green-dim: rgba(0,220,130,0.10);
+  --amber:  #fbbf24;
+  --amber-dim: rgba(251,191,36,0.10);
+  --text:   #f1f5f9;
+  --text-2: #94a3b8;
+  --text-3: #475569;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 16px; line-height: 1.7;
+  color: var(--text); background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+}
+a { color: var(--green); text-decoration: none; }
+a:hover { text-decoration: underline; }
+body::before {
+  content: "";
+  position: fixed; inset: 0;
+  background-image: radial-gradient(circle, rgba(255,255,255,0.03) 1px, transparent 1px);
+  background-size: 28px 28px;
+  pointer-events: none; z-index: 0;
+}
+nav {
+  position: sticky; top: 0; z-index: 100;
+  border-bottom: 1px solid var(--border);
+  background: rgba(3,7,18,0.88);
+  backdrop-filter: blur(20px);
+}
+.nav-inner {
+  max-width: 860px; margin: 0 auto; padding: 0 24px;
+  display: flex; align-items: center; justify-content: space-between; height: 60px;
+}
+.logo {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 17px; font-weight: 800; letter-spacing: -0.5px; color: var(--text);
+  text-decoration: none;
+}
+.logo-mark {
+  width: 30px; height: 30px; border-radius: 8px;
+  background: linear-gradient(135deg, var(--green) 0%, #22d3ee 100%);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 900; color: #030712;
+}
+.logo-name span { color: var(--green); }
+.nav-back { font-size: 13px; color: var(--text-2); font-weight: 500; transition: color 0.15s; }
+.nav-back:hover { color: var(--text); text-decoration: none; }
+.nav-legal-links { display: flex; align-items: center; gap: 10px; }
+.nav-sep { color: var(--text-3); font-size: 12px; }
+.nav-legal-link { font-size: 13px; color: var(--text-3); transition: color 0.15s; }
+.nav-legal-link:hover { color: var(--text-2); text-decoration: none; }
+.nav-legal-active { font-size: 13px; color: var(--green); font-weight: 600; }
+.container {
+  max-width: 760px; margin: 0 auto; padding: 60px 24px 100px;
+  position: relative; z-index: 1;
+}
+.page-header {
+  padding-bottom: 32px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 48px;
+}
+.eyebrow {
+  font-size: 11px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 1.5px; color: var(--green); margin-bottom: 12px;
+}
+h1 {
+  font-size: clamp(28px, 5vw, 40px);
+  letter-spacing: -1px; font-weight: 700; color: var(--text);
+  margin-bottom: 12px;
+}
+.last-updated { font-size: 13px; color: var(--text-3); }
+h2 {
+  font-size: 20px; font-weight: 600; color: var(--text);
+  margin: 40px 0 14px; letter-spacing: -0.3px;
+}
+p { color: var(--text-2); margin-bottom: 14px; }
+ul, ol { color: var(--text-2); padding-left: 20px; margin-bottom: 14px; }
+li { margin-bottom: 6px; }
+.callout {
+  background: var(--amber-dim);
+  border: 1px solid rgba(251,191,36,0.2);
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin: 24px 0;
+  font-size: 14.5px; color: var(--text); line-height: 1.6;
+}
+.callout strong { color: var(--amber); }
+.divider { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
+footer {
+  border-top: 1px solid var(--border);
+  padding: 28px 24px; text-align: center;
+  font-size: 13px; color: var(--text-3);
+}
+footer a { color: var(--text-3); }
+footer a:hover { color: var(--text-2); text-decoration: none; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="logo">
+      <div class="logo-mark">L</div>
+      <span class="logo-name">Loonie<span>Log</span></span>
+    </a>
+    <div class="nav-legal-links">
+      <a href="index.html" class="nav-back">← Home</a>
+      <span class="nav-sep">·</span>
+      <a href="privacy.html" class="nav-legal-link">Privacy Policy</a>
+      <span class="nav-sep">·</span>
+      <a href="terms.html" class="nav-legal-active">Terms of Service</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="page-header">
+    <div class="eyebrow">Legal</div>
+    <h1>Terms of Service</h1>
+    <p class="last-updated">Last updated: March 2026 · Effective immediately</p>
+  </div>
+
+  <div class="callout">
+    <strong>Important:</strong> LoonieLog is a software tool, not a tax advisor. Nothing produced by LoonieLog constitutes professional tax, accounting, or legal advice. Always consult a qualified accountant or tax professional before filing your return.
+  </div>
+
+  <h2>1. Acceptance of Terms</h2>
+  <p>By installing, copying, or using LoonieLog (the "Add-on"), you agree to be bound by these Terms of Service ("Terms"). If you do not agree to these Terms, do not install or use the Add-on.</p>
+  <p>These Terms apply to the Google Workspace Marketplace listing, the Google Sheets template copy, and any other distribution of the LoonieLog codebase.</p>
+
+  <h2>2. What LoonieLog Is</h2>
+  <p>LoonieLog is a Google Apps Script add-on that automates the extraction and logging of Canadian business expense data from Gmail and Google Drive into a Google Sheet. It uses third-party AI APIs (Gemini or Claude) to extract structured data from receipts and applies heuristic rules based on CRA T2125 guidance.</p>
+  <p>LoonieLog is:</p>
+  <ul>
+    <li>A <strong>productivity and data extraction tool</strong>, not a registered tax preparation service</li>
+    <li><strong>Not affiliated with, endorsed by, or approved by</strong> the Canada Revenue Agency (CRA)</li>
+    <li><strong>Not affiliated with</strong> Google LLC, Anthropic, or any AI provider</li>
+  </ul>
+
+  <h2>3. License</h2>
+  <p>LoonieLog is released under the <a href="https://opensource.org/licenses/MIT" target="_blank">MIT License</a>. You are free to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the software, subject to the conditions of that license.</p>
+  <p>The LoonieLog name, logo, and associated branding are not covered by the MIT License and may not be used to imply endorsement without written permission.</p>
+
+  <h2>4. Eligibility</h2>
+  <p>LoonieLog is designed for use by:</p>
+  <ul>
+    <li>Canadian self-employed individuals and sole proprietors</li>
+    <li>Businesses filing CRA T2125 (Statement of Business or Professional Activities) as part of a T1 return</li>
+    <li>Users who have a Google account and control over the associated Gmail and Drive</li>
+  </ul>
+  <p>You must be at least 18 years old to use LoonieLog. Corporate T2 filers should seek purpose-built corporate accounting software.</p>
+
+  <h2>5. Permitted Use</h2>
+  <p>You may use LoonieLog to:</p>
+  <ul>
+    <li>Extract and log business expense data for your own use</li>
+    <li>Organize CRA T2125 expense categories for your own tax return</li>
+    <li>Review, modify, and export the data in your own Google Sheet</li>
+    <li>Modify the open-source code for your personal or internal business use</li>
+  </ul>
+
+  <h2>6. Prohibited Use</h2>
+  <p>You may not use LoonieLog to:</p>
+  <ul>
+    <li>Process expenses on behalf of other individuals without their knowledge and consent</li>
+    <li>Build a competing commercial product that misrepresents itself as LoonieLog</li>
+    <li>Circumvent, disable, or otherwise interfere with any security features of Google's platforms</li>
+    <li>Use the software in any way that violates applicable laws, including CRA regulations</li>
+    <li>Process or expose another person's financial data without their explicit consent</li>
+  </ul>
+
+  <h2>7. No Tax or Legal Advice</h2>
+  <p>LoonieLog applies heuristic rules based on publicly available CRA T2125 guidance. These rules are <strong>not guaranteed to be correct, complete, or applicable to your specific situation</strong>.</p>
+  <ul>
+    <li>CRA rules change. LoonieLog's prompt and rules may not reflect the most current guidance.</li>
+    <li>AI extraction is imperfect. Vendors, amounts, and categories may be incorrectly identified.</li>
+    <li>Province-specific rules (QST, PST, HST) are approximated and may not apply to edge cases.</li>
+    <li>ITC eligibility determinations are estimates only.</li>
+  </ul>
+  <p><strong>You are solely responsible for reviewing, correcting, and verifying all data before filing with CRA.</strong> Always consult a CPA or tax professional before filing your return.</p>
+
+  <h2>8. Third-Party Services</h2>
+  <p>LoonieLog calls Gemini API, Claude API, and the Bank of Canada Valet API using credentials <strong>you provide</strong>. Your use of those services is governed by their respective terms:</p>
+  <ul>
+    <li><a href="https://ai.google.dev/terms" target="_blank">Google Generative AI Terms of Service</a></li>
+    <li><a href="https://www.anthropic.com/legal/consumer-terms" target="_blank">Anthropic Consumer Terms</a></li>
+    <li>Bank of Canada Valet API — public data, no separate ToS required</li>
+  </ul>
+  <p>Any costs incurred for AI API usage are your responsibility. LoonieLog does not charge for API usage — those costs are billed directly by Gemini or Anthropic to your account.</p>
+
+  <h2>9. Disclaimer of Warranties</h2>
+  <p>LoonieLog is provided "as is" and "as available" without warranty of any kind, express or implied, including but not limited to warranties of merchantability, fitness for a particular purpose, or non-infringement.</p>
+  <p>We do not warrant that:</p>
+  <ul>
+    <li>The add-on will be error-free or uninterrupted</li>
+    <li>AI-extracted data will be accurate or complete</li>
+    <li>CRA category classifications will be correct for your situation</li>
+    <li>The software will comply with future changes to CRA rules</li>
+  </ul>
+
+  <h2>10. Limitation of Liability</h2>
+  <p>To the maximum extent permitted by applicable law, the LoonieLog team shall not be liable for any indirect, incidental, special, consequential, or punitive damages, including but not limited to:</p>
+  <ul>
+    <li>Tax penalties or interest arising from incorrect expense categorization</li>
+    <li>CRA audit findings based on LoonieLog-produced data</li>
+    <li>Loss of data due to Google platform outages or script failures</li>
+    <li>Financial loss resulting from AI extraction errors</li>
+  </ul>
+  <p>Our total liability to you for any claim arising out of or relating to these Terms or the use of LoonieLog shall not exceed the amount you paid us in the 12 months preceding the claim (which is $0 for free users).</p>
+
+  <h2>11. Indemnification</h2>
+  <p>You agree to indemnify and hold harmless the LoonieLog team from any claims, losses, liabilities, damages, costs, and expenses (including reasonable legal fees) arising out of or relating to your use of the add-on, your violation of these Terms, or your violation of any applicable law or regulation.</p>
+
+  <h2>12. Privacy</h2>
+  <p>Your use of LoonieLog is also governed by our <a href="privacy.html">Privacy Policy</a>, which is incorporated into these Terms by reference.</p>
+
+  <h2>13. Modifications to the Add-on or Terms</h2>
+  <p>We reserve the right to modify, suspend, or discontinue LoonieLog at any time without notice. We may also update these Terms — changes will be indicated by an updated "Last updated" date. Continued use of the add-on after changes constitutes acceptance.</p>
+
+  <h2>14. Governing Law</h2>
+  <p>These Terms are governed by the laws of the Province of Ontario, Canada, without regard to conflict of law provisions. Any disputes shall be subject to the exclusive jurisdiction of the courts of Ontario.</p>
+
+  <h2>15. Contact</h2>
+  <p>Questions about these Terms? Reach us at:</p>
+  <p>Email: <a href="mailto:hello@loonielog.ca">hello@loonielog.ca</a></p>
+  <p>We aim to respond within 5 business days.</p>
+
+  <hr class="divider">
+  <p style="font-size:13px;color:var(--text-3);">LoonieLog is not a registered tax preparation service. It is not affiliated with or endorsed by the Canada Revenue Agency (CRA), Google LLC, or Anthropic. All CRA T2125 line number references are based on publicly available CRA documentation.</p>
+</div>
+
+<footer>
+  <a href="/">LoonieLog</a> · <a href="/privacy.html">Privacy Policy</a> · <a href="/terms.html">Terms of Service</a> · <a href="mailto:hello@loonielog.ca">Contact</a>
+  <br><br>
+  © 2026 LoonieLog · Not affiliated with CRA · Built in Canada 🍁
+</footer>
+
+</body>
+</html>

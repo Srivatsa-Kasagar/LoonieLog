@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="LoonieLog Privacy Policy — how your data is handled when using the LoonieLog AI expense agent for Google Sheets.">
+  <title>Privacy Policy — LoonieLog</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+:root {
+  --bg:     #030712;
+  --bg-1:   #080f1f;
+  --bg-card:rgba(255,255,255,0.032);
+  --border: rgba(255,255,255,0.07);
+  --border-md: rgba(255,255,255,0.11);
+  --green:  #00dc82;
+  --green-dim: rgba(0,220,130,0.10);
+  --text:   #f1f5f9;
+  --text-2: #94a3b8;
+  --text-3: #475569;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--text);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+}
+a { color: var(--green); text-decoration: none; }
+a:hover { text-decoration: underline; }
+body::before {
+  content: "";
+  position: fixed; inset: 0;
+  background-image: radial-gradient(circle, rgba(255,255,255,0.03) 1px, transparent 1px);
+  background-size: 28px 28px;
+  pointer-events: none; z-index: 0;
+}
+nav {
+  position: sticky; top: 0; z-index: 100;
+  border-bottom: 1px solid var(--border);
+  background: rgba(3,7,18,0.88);
+  backdrop-filter: blur(20px);
+}
+.nav-inner {
+  max-width: 860px; margin: 0 auto; padding: 0 24px;
+  display: flex; align-items: center; justify-content: space-between; height: 60px;
+}
+.logo {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 17px; font-weight: 800; letter-spacing: -0.5px; color: var(--text);
+  text-decoration: none;
+}
+.logo-mark {
+  width: 30px; height: 30px; border-radius: 8px;
+  background: linear-gradient(135deg, var(--green) 0%, #22d3ee 100%);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 900; color: #030712;
+}
+.logo-name span { color: var(--green); }
+.nav-back {
+  font-size: 13px; color: var(--text-2); font-weight: 500; transition: color 0.15s;
+}
+.nav-back:hover { color: var(--text); text-decoration: none; }
+.nav-legal-links { display: flex; align-items: center; gap: 10px; }
+.nav-sep { color: var(--text-3); font-size: 12px; }
+.nav-legal-link { font-size: 13px; color: var(--text-3); transition: color 0.15s; }
+.nav-legal-link:hover { color: var(--text-2); text-decoration: none; }
+.nav-legal-active { font-size: 13px; color: var(--green); font-weight: 600; }
+.container {
+  max-width: 760px; margin: 0 auto; padding: 60px 24px 100px;
+  position: relative; z-index: 1;
+}
+.page-header {
+  padding-bottom: 32px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 48px;
+}
+.eyebrow {
+  font-size: 11px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 1.5px; color: var(--green); margin-bottom: 12px;
+}
+h1 {
+  font-size: clamp(28px, 5vw, 40px);
+  letter-spacing: -1px; font-weight: 700; color: var(--text);
+  margin-bottom: 12px;
+}
+.last-updated {
+  font-size: 13px; color: var(--text-3);
+}
+h2 {
+  font-size: 20px; font-weight: 600; color: var(--text);
+  margin: 40px 0 14px; letter-spacing: -0.3px;
+}
+h3 {
+  font-size: 16px; font-weight: 600; color: var(--text);
+  margin: 24px 0 8px;
+}
+p { color: var(--text-2); margin-bottom: 14px; }
+ul, ol { color: var(--text-2); padding-left: 20px; margin-bottom: 14px; }
+li { margin-bottom: 6px; }
+.callout {
+  background: var(--green-dim);
+  border: 1px solid rgba(0,220,130,0.2);
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin: 24px 0;
+  font-size: 14.5px; color: var(--text);
+  line-height: 1.6;
+}
+.callout strong { color: var(--green); }
+.scope-table {
+  width: 100%; border-collapse: collapse;
+  margin: 16px 0; font-size: 13.5px;
+}
+.scope-table th {
+  text-align: left; padding: 8px 12px;
+  border-bottom: 1px solid var(--border-md);
+  color: var(--text-2); font-weight: 600;
+  font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;
+}
+.scope-table td {
+  padding: 9px 12px; border-bottom: 1px solid var(--border);
+  vertical-align: top; color: var(--text-2);
+}
+.scope-table td:first-child { font-family: monospace; font-size: 12px; color: var(--green); }
+.divider {
+  border: none; border-top: 1px solid var(--border);
+  margin: 40px 0;
+}
+footer {
+  border-top: 1px solid var(--border);
+  padding: 28px 24px;
+  text-align: center;
+  font-size: 13px; color: var(--text-3);
+}
+footer a { color: var(--text-3); }
+footer a:hover { color: var(--text-2); text-decoration: none; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="logo">
+      <div class="logo-mark">L</div>
+      <span class="logo-name">Loonie<span>Log</span></span>
+    </a>
+    <div class="nav-legal-links">
+      <a href="index.html" class="nav-back">← Home</a>
+      <span class="nav-sep">·</span>
+      <a href="privacy.html" class="nav-legal-active">Privacy Policy</a>
+      <span class="nav-sep">·</span>
+      <a href="terms.html" class="nav-legal-link">Terms of Service</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="page-header">
+    <div class="eyebrow">Legal</div>
+    <h1>Privacy Policy</h1>
+    <p class="last-updated">Last updated: March 2026 · Effective immediately</p>
+  </div>
+
+  <div class="callout">
+    <strong>The short version:</strong> LoonieLog has no server. Your financial data never leaves your Google account. Your API keys are stored in Google's encrypted PropertiesService — never on any LoonieLog infrastructure, because none exists.
+  </div>
+
+  <h2>1. Who We Are</h2>
+  <p>LoonieLog ("the add-on", "the software") is a Google Apps Script add-on that runs inside your Google Sheets spreadsheet. It is developed and maintained by the LoonieLog team, reachable at <a href="mailto:hello@loonielog.ca">hello@loonielog.ca</a>.</p>
+  <p>For the purposes of this policy, "we", "us", or "our" refers to the LoonieLog team. "You" or "your" refers to the individual who installs and uses the add-on.</p>
+
+  <h2>2. What Data LoonieLog Accesses</h2>
+  <p>LoonieLog is an add-on that operates entirely within your Google account. It accesses the following data using the OAuth scopes you authorize during installation:</p>
+  <table class="scope-table">
+    <thead>
+      <tr>
+        <th>OAuth Scope</th>
+        <th>What it's used for</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>gmail.modify</td>
+        <td>Read Gmail messages to find receipt emails; apply labels (e.g., "loonielog-processed") to processed threads; never reads email unrelated to receipts</td>
+      </tr>
+      <tr>
+        <td>gmail.settings.basic</td>
+        <td>Create Gmail filters that route receipt emails from known vendors to the To_Log label automatically</td>
+      </tr>
+      <tr>
+        <td>drive</td>
+        <td>Create and manage the LoonieLog_Unprocessed and archive folders; rename and move receipt files you drop into those folders</td>
+      </tr>
+      <tr>
+        <td>spreadsheets</td>
+        <td>Read and write to the Google Sheet where expense data is logged — the spreadsheet you own</td>
+      </tr>
+      <tr>
+        <td>script.external_request</td>
+        <td>Make HTTPS calls to Gemini API, Claude API (with your own key), and the Bank of Canada Valet API for exchange rates</td>
+      </tr>
+      <tr>
+        <td>script.scriptapp</td>
+        <td>Create a time-based trigger that runs the agent on a daily schedule</td>
+      </tr>
+      <tr>
+        <td>userinfo.email</td>
+        <td>Read your Google account email address for display in the Settings tab only</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>3. What LoonieLog Does NOT Do</h2>
+  <ul>
+    <li>LoonieLog has <strong>no server, no database, and no backend infrastructure</strong>. There is nowhere for your data to be sent to or stored by us.</li>
+    <li>We do <strong>not</strong> collect, transmit, or store your receipt data, email content, or financial information.</li>
+    <li>We do <strong>not</strong> store your Gemini or Claude API keys. They are stored in Google's <code>PropertiesService.getUserProperties()</code> — encrypted, user-scoped storage that only your script instance can access.</li>
+    <li>We do <strong>not</strong> share any data with advertisers or analytics services.</li>
+    <li>We do <strong>not</strong> read, scan, or process Gmail messages that are not tagged with the <code>To_Log</code> label (unless you explicitly run the backfill function, which searches for receipt keywords in the past 90 days).</li>
+  </ul>
+
+  <h2>4. Third-Party Services</h2>
+  <p>LoonieLog calls the following third-party APIs on your behalf, using API keys <strong>you provide and own</strong>:</p>
+
+  <h3>Google Gemini API (Generative Language API)</h3>
+  <p>If you choose Gemini as your AI model, receipt images and email text are sent from your Google account directly to Google's Gemini API endpoint (<code>generativelanguage.googleapis.com</code>). This data is governed by <a href="https://ai.google.dev/terms" target="_blank">Google's Generative AI Terms of Service</a> and its <a href="https://policies.google.com/privacy" target="_blank">Privacy Policy</a>. LoonieLog does not intermediate or store this data.</p>
+
+  <h3>Anthropic Claude API</h3>
+  <p>If you choose Claude as your AI model, receipt images and email text are sent from your Google account directly to Anthropic's API endpoint (<code>api.anthropic.com</code>). This data is governed by <a href="https://www.anthropic.com/legal/privacy" target="_blank">Anthropic's Privacy Policy</a>. LoonieLog does not intermediate or store this data.</p>
+
+  <h3>Bank of Canada Valet API</h3>
+  <p>For USD receipts, LoonieLog calls the Bank of Canada's public Valet API (<code>bankofcanada.ca/valet</code>) to retrieve the USD/CAD exchange rate for the receipt date. This API requires no authentication and no personal data is sent — only a date parameter.</p>
+
+  <h2>5. Data Stored Within Your Google Account</h2>
+  <p>All data processed by LoonieLog is stored exclusively within your own Google account:</p>
+  <ul>
+    <li><strong>Google Sheets</strong> — Expense rows, Audit Log, Settings display (no API keys in sheet)</li>
+    <li><strong>Google Drive</strong> — Receipt files in your LoonieLog_Unprocessed and archive folders</li>
+    <li><strong>PropertiesService</strong> — API keys, configuration settings, deduplication hashes, FX rate cache. This storage is encrypted by Google and scoped to your user account only.</li>
+    <li><strong>Gmail</strong> — Labels applied to processed threads; filters created to route receipt emails</li>
+  </ul>
+  <p>You retain full ownership of all this data. Uninstalling the add-on does not delete your sheet data or Drive files — you control those directly.</p>
+
+  <h2>6. Google API Services User Data Policy</h2>
+  <p>LoonieLog's use and transfer of information received from Google APIs adheres to the <a href="https://developers.google.com/terms/api-services-user-data-policy" target="_blank">Google API Services User Data Policy</a>, including the Limited Use requirements. Specifically:</p>
+  <ul>
+    <li>Data obtained from Gmail and Drive is used <strong>only</strong> to provide the receipt logging and expense tracking features described in this policy.</li>
+    <li>We do not use Gmail or Drive data for advertising purposes.</li>
+    <li>We do not allow humans to read your Gmail or Drive data except if required for security or legal compliance.</li>
+    <li>We do not sell Gmail or Drive data to third parties.</li>
+  </ul>
+
+  <h2>7. Children's Privacy</h2>
+  <p>LoonieLog is designed for use by self-employed adults and small business owners. We do not knowingly collect information from children under 13. If you believe a minor has used this add-on, please contact us at <a href="mailto:hello@loonielog.ca">hello@loonielog.ca</a>.</p>
+
+  <h2>8. Your Rights and Controls</h2>
+  <ul>
+    <li><strong>Revoke access:</strong> You can revoke LoonieLog's OAuth access at any time via <a href="https://myaccount.google.com/permissions" target="_blank">Google Account Permissions</a>. This immediately stops the add-on from accessing your Gmail, Drive, and Sheets.</li>
+    <li><strong>Uninstall:</strong> Remove the add-on from Google Sheets via Extensions → Manage Add-ons. This deletes the time-based trigger. Your data in Sheets and Drive is not affected.</li>
+    <li><strong>Delete your data:</strong> Delete the LoonieLog spreadsheet and Drive folders from your account to remove all logged expense data.</li>
+    <li><strong>Clear script properties:</strong> In the Apps Script editor, you can manually clear PropertiesService to remove API keys and cached hashes.</li>
+  </ul>
+
+  <h2>9. Security</h2>
+  <p>LoonieLog uses Google's built-in security infrastructure:</p>
+  <ul>
+    <li>API keys are stored in <code>PropertiesService.getUserProperties()</code> — encrypted at rest by Google and accessible only to your script instance.</li>
+    <li>All external API calls are made over HTTPS.</li>
+    <li>The add-on runs in Google's Apps Script sandbox, which restricts file system and network access to the allowlist declared in <code>appsscript.json</code>.</li>
+  </ul>
+  <p>Because there is no LoonieLog server, there is no LoonieLog database that could be breached to expose your data.</p>
+
+  <h2>10. Changes to This Policy</h2>
+  <p>If we make material changes to this Privacy Policy, we will update the "Last updated" date above and, where possible, notify you via the LoonieLog Dashboard or via the email associated with your Google account.</p>
+  <p>Continued use of the add-on after changes are posted constitutes your acceptance of the updated policy.</p>
+
+  <h2>11. Contact</h2>
+  <p>Questions about this Privacy Policy or how LoonieLog handles your data?</p>
+  <p>Email: <a href="mailto:hello@loonielog.ca">hello@loonielog.ca</a></p>
+  <p>We aim to respond within 5 business days.</p>
+
+  <hr class="divider">
+  <p style="font-size:13px;color:var(--text-3);">This policy applies to LoonieLog as a Google Workspace Add-on. LoonieLog is not affiliated with or endorsed by the Canada Revenue Agency (CRA), Google LLC, or Anthropic.</p>
+</div>
+
+<footer>
+  <a href="/">LoonieLog</a> · <a href="/privacy.html">Privacy Policy</a> · <a href="/terms.html">Terms of Service</a> · <a href="mailto:hello@loonielog.ca">Contact</a>
+  <br><br>
+  © 2026 LoonieLog · Not affiliated with CRA · Built in Canada 🍁
+</footer>
+
+</body>
+</html>

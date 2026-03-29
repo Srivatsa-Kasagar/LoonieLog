@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <base target="_top">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:        #ffffff;
+      --surface:   #f8f9fa;
+      --border:    #e8eaed;
+      --border-md: #dadce0;
+      --blue:      #1a73e8;
+      --blue-dim:  #e8f0fe;
+      --green-brand: #00b96b;
+      --green:     #188038;
+      --green-dim: #e6f4ea;
+      --red:       #d93025;
+      --red-dim:   #fce8e6;
+      --text:      #202124;
+      --text-2:    #5f6368;
+      --text-3:    #80868b;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: "Inter", system-ui, sans-serif;
+      font-size: 14px;
+      color: var(--text);
+      background: var(--bg);
+      padding: 26px 22px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .logo {
+      display: flex; align-items: center; gap: 7px; margin-bottom: 18px;
+    }
+    .logo-mark {
+      width: 26px; height: 26px; border-radius: 6px;
+      background: linear-gradient(135deg, #00dc82 0%, #1a73e8 100%);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 900; color: #fff;
+    }
+    .logo-name { font-size: 15px; font-weight: 700; letter-spacing: -0.3px; color: var(--text); }
+    .logo-name span { color: var(--green-brand); }
+
+    /* ── States ──────────────────────────────────────── */
+    .state { display: none; }
+    .state.active { display: block; }
+
+    /* ── Input state ─────────────────────────────────── */
+    .heading { font-size: 16px; font-weight: 700; margin-bottom: 5px; color: var(--text); }
+    .subtext { font-size: 12px; color: var(--text-3); margin-bottom: 18px; line-height: 1.5; }
+
+    .field { margin-bottom: 14px; }
+    .field label {
+      display: block; font-size: 11px; font-weight: 600;
+      color: var(--text-2); margin-bottom: 5px;
+      text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    .key-input {
+      width: 100%; padding: 10px 11px;
+      background: var(--surface); border: 1px solid var(--border-md);
+      border-radius: 6px; outline: none;
+      font-family: monospace; font-size: 14px; font-weight: 600;
+      color: var(--blue); letter-spacing: 1px;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .key-input:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 2px rgba(26,115,232,0.15);
+      background: var(--bg);
+    }
+    .key-input::placeholder { color: var(--text-3); font-weight: 400; letter-spacing: 0; font-size: 13px; }
+
+    .error-msg {
+      display: none; font-size: 12px; color: var(--red);
+      background: var(--red-dim); border: 1px solid #f5c6c3;
+      border-radius: 6px; padding: 8px 10px;
+      margin-bottom: 12px; line-height: 1.4;
+    }
+    .error-msg.visible { display: block; }
+
+    .btn-activate {
+      width: 100%; padding: 10px;
+      background: var(--blue); color: #fff;
+      border: none; border-radius: 6px;
+      font-size: 14px; font-weight: 600; cursor: pointer;
+      font-family: "Inter", system-ui, sans-serif;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      transition: background 0.15s;
+    }
+    .btn-activate:hover:not(:disabled) { background: #1557b0; }
+    .btn-activate:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .get-key-link {
+      display: block; text-align: center; margin-top: 12px;
+      font-size: 12px; color: var(--text-3);
+    }
+    .get-key-link a { color: var(--blue); text-decoration: none; }
+    .get-key-link a:hover { text-decoration: underline; }
+
+    /* ── Loading state ───────────────────────────────── */
+    .loading-wrap {
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 28px 0; gap: 12px;
+    }
+    .spinner-lg {
+      width: 28px; height: 28px;
+      border: 3px solid var(--border-md);
+      border-top-color: var(--blue);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading-text { font-size: 13px; color: var(--text-2); }
+
+    /* ── Success state ───────────────────────────────── */
+    .success-wrap { text-align: center; padding: 14px 0; }
+    .success-icon { font-size: 38px; display: block; margin-bottom: 10px; }
+    .success-title { font-size: 17px; font-weight: 700; margin-bottom: 5px; color: var(--text); }
+    .success-sub { font-size: 12px; color: var(--text-3); line-height: 1.6; }
+    .success-badge {
+      display: inline-block; margin-top: 12px;
+      padding: 5px 14px; border-radius: 20px;
+      background: var(--green-dim); border: 1px solid #b7dfbc;
+      font-size: 12px; font-weight: 600; color: var(--green);
+    }
+
+    /* ── Spinner (button) ────────────────────────────── */
+    .spinner {
+      width: 14px; height: 14px;
+      border: 2px solid rgba(255,255,255,0.4);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="logo">
+    <div class="logo-mark">L</div>
+    <span class="logo-name">Loonie<span>Log</span></span>
+  </div>
+
+  <!-- Input ────────────────────────────────────────────────── -->
+  <div id="state-input" class="state active">
+    <div class="heading">Activate Core DIY</div>
+    <p class="subtext">Paste the license key from your purchase email.</p>
+
+    <div class="error-msg" id="errorMsg"></div>
+
+    <div class="field">
+      <label for="keyInput">License Key</label>
+      <input
+        type="text" id="keyInput" class="key-input"
+        placeholder="CORE-XXXXX-XXXXX-XXXXX"
+        autocomplete="off" autocorrect="off"
+        autocapitalize="characters" spellcheck="false" maxlength="25"
+      >
+    </div>
+
+    <button class="btn-activate" id="activateBtn" onclick="activateKey()">
+      Activate License
+    </button>
+
+    <p class="get-key-link">
+      No key yet? <a href="https://loonielog.ca/#pricing" target="_blank">Get Core DIY ↗</a>
+    </p>
+  </div>
+
+  <!-- Loading ──────────────────────────────────────────────── -->
+  <div id="state-loading" class="state">
+    <div class="loading-wrap">
+      <div class="spinner-lg"></div>
+      <span class="loading-text">Verifying your key…</span>
+    </div>
+  </div>
+
+  <!-- Success ──────────────────────────────────────────────── -->
+  <div id="state-success" class="state">
+    <div class="success-wrap">
+      <span class="success-icon">🎉</span>
+      <div class="success-title">Core DIY Activated!</div>
+      <p class="success-sub">You now have <strong>50 receipts/month</strong>.<br>This dialog will close automatically.</p>
+      <span class="success-badge">✓ Core DIY Plan</span>
+    </div>
+  </div>
+
+<script>
+  document.getElementById("keyInput").addEventListener("input", function(e) {
+    var raw    = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, "");
+    var capped = raw.slice(0, 19);
+    var display = "";
+    if (capped.startsWith("CORE")) {
+      var body = capped.slice(4);
+      var segs = [];
+      for (var i = 0; i < body.length; i += 5) segs.push(body.slice(i, i + 5));
+      display = "CORE" + (segs.length ? "-" + segs.join("-") : "");
+    } else { display = capped; }
+    e.target.value = display;
+    hideError();
+  });
+
+  function showState(id) {
+    ["state-input","state-loading","state-success"].forEach(function(s) {
+      document.getElementById(s).classList.toggle("active", s === id);
+    });
+  }
+  function showError(msg) {
+    var el = document.getElementById("errorMsg");
+    el.textContent = msg; el.classList.add("visible");
+  }
+  function hideError() { document.getElementById("errorMsg").classList.remove("visible"); }
+
+  function activateKey() {
+    var key = document.getElementById("keyInput").value.trim();
+    hideError();
+    if (!key) { showError("Please enter your license key."); return; }
+    if (!/^CORE-[A-Z2-9]{5}-[A-Z2-9]{5}-[A-Z2-9]{5}$/.test(key)) {
+      showError("Invalid key format. It should look like CORE-XXXXX-XXXXX-XXXXX.");
+      return;
+    }
+    document.getElementById("activateBtn").disabled = true;
+    document.getElementById("activateBtn").innerHTML = '<div class="spinner"></div> Verifying…';
+    showState("state-loading");
+
+    google.script.run
+      .withSuccessHandler(function(result) {
+        if (result && result.success) {
+          showState("state-success");
+          setTimeout(function() { google.script.host.close(); }, 2500);
+        } else {
+          showState("state-input");
+          document.getElementById("activateBtn").disabled = false;
+          document.getElementById("activateBtn").innerHTML = "Activate License";
+          showError(result ? result.message : "An unexpected error occurred.");
+        }
+      })
+      .withFailureHandler(function(err) {
+        showState("state-input");
+        document.getElementById("activateBtn").disabled = false;
+        document.getElementById("activateBtn").innerHTML = "Activate License";
+        showError("Error: " + (err.message || String(err)));
+      })
+      .activateLicenseKey(key);
+  }
+</script>
+</body>
+</html>

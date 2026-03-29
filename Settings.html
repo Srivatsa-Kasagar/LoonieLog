@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <base target="_top">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:        #ffffff;
+      --surface:   #f8f9fa;
+      --border:    #e8eaed;
+      --border-md: #dadce0;
+      --blue:      #1a73e8;
+      --blue-dim:  #e8f0fe;
+      --green-brand: #00b96b;
+      --green:     #188038;
+      --green-dim: #e6f4ea;
+      --red:       #d93025;
+      --red-dim:   #fce8e6;
+      --text:      #202124;
+      --text-2:    #5f6368;
+      --text-3:    #80868b;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: "Inter", system-ui, sans-serif;
+      font-size: 14px;
+      color: var(--text);
+      background: var(--bg);
+      padding: 22px 18px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .logo {
+      display: inline-flex; align-items: center; gap: 7px; margin-bottom: 3px;
+    }
+    .logo-icon {
+      width: 26px; height: 26px; border-radius: 6px;
+      background: linear-gradient(135deg, #00dc82 0%, #1a73e8 100%);
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-size: 12px; font-weight: 900;
+    }
+    .logo-text { font-size: 15px; font-weight: 700; color: var(--text); letter-spacing: -0.3px; }
+    .logo-text span { color: var(--green-brand); }
+    .page-title { font-size: 11px; color: var(--text-3); margin-bottom: 20px; }
+
+    .field { margin-bottom: 14px; }
+    label {
+      display: block; font-size: 11px; font-weight: 600;
+      color: var(--text-2); margin-bottom: 5px;
+      text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    input[type="password"], input[type="text"] {
+      width: 100%; padding: 9px 11px;
+      border: 1px solid var(--border-md);
+      border-radius: 6px; font-size: 13px;
+      color: var(--text); outline: none;
+      background: var(--bg);
+      transition: border-color 0.15s, box-shadow 0.15s;
+      font-family: "Inter", system-ui, sans-serif;
+    }
+    input:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 2px rgba(26,115,232,0.15);
+    }
+    .helper { font-size: 11px; color: var(--text-3); margin-top: 4px; }
+    .helper a { color: var(--blue); text-decoration: none; }
+    .helper a:hover { text-decoration: underline; }
+
+    .current-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: var(--blue-dim); border: 1px solid rgba(26,115,232,0.25);
+      border-radius: 4px; padding: 3px 8px;
+      font-size: 11px; color: var(--blue); font-weight: 600;
+      margin-bottom: 9px;
+    }
+
+    .radio-group { display: flex; flex-direction: column; gap: 7px; }
+    .radio-card {
+      display: flex; align-items: flex-start; gap: 10px;
+      padding: 10px 11px;
+      border: 1px solid var(--border-md);
+      border-radius: 7px; cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+      background: var(--bg);
+    }
+    .radio-card:hover { border-color: var(--blue); background: var(--blue-dim); }
+    .radio-card input[type="radio"] {
+      width: auto; margin-top: 2px; accent-color: var(--blue); flex-shrink: 0;
+    }
+    .radio-card.selected { border-color: var(--blue); background: var(--blue-dim); }
+    .radio-label { font-size: 13px; font-weight: 600; color: var(--text); }
+    .radio-desc  { font-size: 11px; color: var(--text-3); margin-top: 2px; }
+
+    .divider { height: 1px; background: var(--border); margin: 18px 0; }
+
+    .btn-primary {
+      width: 100%; padding: 10px;
+      background: var(--blue); color: #fff;
+      border: none; border-radius: 6px;
+      font-size: 14px; font-weight: 600;
+      cursor: pointer; transition: background 0.15s;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      font-family: "Inter", system-ui, sans-serif;
+    }
+    .btn-primary:hover:not(:disabled) { background: #1557b0; }
+    .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .error-banner, .success-banner {
+      display: none; border-radius: 6px; padding: 9px 11px;
+      font-size: 12px; margin-bottom: 12px; line-height: 1.4;
+    }
+    .error-banner   { background: var(--red-dim);   color: var(--red);   border: 1px solid #f5c6c3; }
+    .success-banner { background: var(--green-dim);  color: var(--green); border: 1px solid #b7dfbc; }
+    .error-banner.visible, .success-banner.visible { display: block; }
+
+    .spinner {
+      width: 14px; height: 14px;
+      border: 2px solid rgba(255,255,255,0.4);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .note { font-size: 11px; color: var(--text-3); line-height: 1.5; margin-top: 12px; }
+  </style>
+</head>
+<body>
+
+  <div class="logo">
+    <div class="logo-icon">L</div>
+    <div class="logo-text">Loonie<span>Log</span></div>
+  </div>
+  <p class="page-title">Change Settings</p>
+
+  <div id="errorBanner"   class="error-banner"></div>
+  <div id="successBanner" class="success-banner"></div>
+
+  <div class="field">
+    <label>Current AI Model</label>
+    <div class="current-badge">⚡ <span id="currentModel">Loading…</span></div>
+  </div>
+
+  <div class="field">
+    <label>Switch AI Model</label>
+    <div class="radio-group">
+      <label class="radio-card" id="card-gemini" onclick="selectModel('gemini')">
+        <input type="radio" name="aiModel" id="model-gemini" value="gemini">
+        <div>
+          <div class="radio-label">Gemini 2.5 Flash</div>
+          <div class="radio-desc">Free tier available · Fast · Google AI</div>
+        </div>
+      </label>
+      <label class="radio-card" id="card-claude" onclick="selectModel('claude')">
+        <input type="radio" name="aiModel" id="model-claude" value="claude">
+        <div>
+          <div class="radio-label">Claude Sonnet 4.6</div>
+          <div class="radio-desc">Most accurate · Requires Anthropic API key</div>
+        </div>
+      </label>
+    </div>
+  </div>
+
+  <div class="field">
+    <label for="apiKey">API Key</label>
+    <input type="password" id="apiKey" placeholder="Leave blank to keep existing key" autocomplete="off">
+    <p class="helper">
+      Only enter a new key if you want to replace the current one.
+      <a href="#" id="apiKeyLink" target="_blank">Get API Key ↗</a>
+    </p>
+  </div>
+
+  <div class="divider"></div>
+
+  <button class="btn-primary" id="saveBtn" onclick="saveSettings()">Save Settings</button>
+
+  <p class="note">Changes take effect on the next run. Your existing receipts are not affected.</p>
+
+<script>
+  var API_KEY_URLS = {
+    gemini: "https://aistudio.google.com/app/apikey",
+    claude: "https://console.anthropic.com/account/keys"
+  };
+
+  google.script.run
+    .withSuccessHandler(function(data) {
+      var model = data.aiModel || "gemini";
+      document.getElementById("currentModel").textContent =
+        model === "claude" ? "Claude Sonnet 4.6" : "Gemini 2.5 Flash";
+      selectModel(model);
+    })
+    .withFailureHandler(function() {
+      document.getElementById("currentModel").textContent = "Unknown";
+      selectModel("gemini");
+    })
+    .getSettingsData();
+
+  function selectModel(model) {
+    document.getElementById("card-gemini").classList.toggle("selected", model === "gemini");
+    document.getElementById("card-claude").classList.toggle("selected", model === "claude");
+    document.getElementById("model-gemini").checked = (model === "gemini");
+    document.getElementById("model-claude").checked = (model === "claude");
+    document.getElementById("apiKeyLink").href = API_KEY_URLS[model] || "#";
+  }
+
+  function saveSettings() {
+    hideMessages();
+    var aiModel = document.querySelector("input[name='aiModel']:checked").value;
+    var apiKey  = document.getElementById("apiKey").value.trim();
+    var btn     = document.getElementById("saveBtn");
+
+    btn.disabled = true;
+    btn.innerHTML = '<div class="spinner"></div> Saving…';
+
+    google.script.run
+      .withSuccessHandler(function(result) {
+        btn.disabled = false; btn.innerHTML = "Save Settings";
+        if (result && result.success) {
+          document.getElementById("currentModel").textContent =
+            aiModel === "claude" ? "Claude Sonnet 4.6" : "Gemini 2.5 Flash";
+          document.getElementById("apiKey").value = "";
+          showSuccess(result.message || "Settings saved.");
+        } else {
+          showError((result && result.message) ? result.message : "Save failed.");
+        }
+      })
+      .withFailureHandler(function(err) {
+        btn.disabled = false; btn.innerHTML = "Save Settings";
+        showError(err.message || String(err));
+      })
+      .saveSettings({ aiModel: aiModel, apiKey: apiKey });
+  }
+
+  function showError(msg)   { var b = document.getElementById("errorBanner");   b.textContent = msg; b.classList.add("visible"); }
+  function showSuccess(msg) { var b = document.getElementById("successBanner"); b.textContent = msg; b.classList.add("visible"); }
+  function hideMessages()   {
+    document.getElementById("errorBanner").classList.remove("visible");
+    document.getElementById("successBanner").classList.remove("visible");
+  }
+</script>
+</body>
+</html>

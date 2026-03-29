@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <base target="_top">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:          #ffffff;
+      --surface:     #f8f9fa;
+      --border:      #e8eaed;
+      --border-md:   #dadce0;
+      --blue:        #1a73e8;
+      --blue-dim:    #e8f0fe;
+      --green:       #188038;
+      --green-dim:   #e6f4ea;
+      --green-brand: #00b96b;
+      --amber:       #e37400;
+      --amber-dim:   #fef7e0;
+      --red:         #d93025;
+      --red-dim:     #fce8e6;
+      --purple:      #7c4dff;
+      --purple-dim:  #ede7f6;
+      --text:        #202124;
+      --text-2:      #5f6368;
+      --text-3:      #80868b;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: "Inter", system-ui, sans-serif;
+      font-size: 13px;
+      color: var(--text);
+      background: var(--bg);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Layout ──────────────────────────────────────── */
+    .panel { padding: 12px; }
+
+    .card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 8px;
+      box-shadow: 0 1px 2px rgba(60,64,67,0.06);
+    }
+
+    .section-title {
+      font-size: 10px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.7px;
+      color: var(--text-3); margin-bottom: 10px;
+    }
+
+    /* ── Header ──────────────────────────────────────── */
+    .header-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 12px 0;
+    }
+    .logo-small {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 13px; font-weight: 700; color: var(--text);
+      letter-spacing: -0.3px;
+    }
+    .logo-mark {
+      width: 22px; height: 22px; border-radius: 5px;
+      background: linear-gradient(135deg, #00dc82 0%, #1a73e8 100%);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 900; color: #fff;
+    }
+    .logo-name span { color: var(--green-brand); }
+
+    .header-right { display: flex; align-items: center; gap: 6px; }
+
+    .status-chip {
+      display: flex; align-items: center; gap: 4px;
+      font-size: 11px; color: var(--text-3);
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; padding: 3px 8px;
+    }
+    .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--text-3); }
+    .dot.green { background: var(--green); }
+    .dot.red   { background: var(--red); }
+
+    .width-btn {
+      font-size: 11px; color: var(--text-3);
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 6px; padding: 3px 7px; cursor: pointer;
+      font-family: "Inter", system-ui, sans-serif;
+      transition: background 0.15s;
+    }
+    .width-btn:hover { background: var(--border); color: var(--text); }
+
+    /* ── Stats card ──────────────────────────────────── */
+    .stats-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px; padding: 14px; margin: 8px 12px;
+    }
+    .receipt-count {
+      font-size: 36px; font-weight: 700; color: var(--text);
+      line-height: 1; letter-spacing: -1.5px; margin-bottom: 2px;
+    }
+    .receipt-label { font-size: 11px; color: var(--text-3); margin-bottom: 12px; }
+
+    .stat-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; }
+    .stat-box {
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: 6px; padding: 8px; text-align: center;
+    }
+    .stat-val { font-size: 12px; font-weight: 600; color: var(--blue); }
+    .stat-lbl { font-size: 9px; color: var(--text-3); margin-top: 2px; text-transform: uppercase; letter-spacing: 0.4px; }
+    .last-run { font-size: 11px; color: var(--text-3); margin-top: 10px; }
+
+    /* ── Tier bar ────────────────────────────────────── */
+    .tier-row {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-top: 10px; font-size: 11px; color: var(--text-2);
+    }
+    .tier-label { font-weight: 600; }
+    .tier-bar-track {
+      width: 100%; height: 4px; border-radius: 2px;
+      background: var(--border-md); margin-top: 5px; overflow: hidden;
+    }
+    .tier-bar-fill {
+      height: 100%; border-radius: 2px;
+      background: var(--blue);
+      transition: width 0.4s ease;
+    }
+    .tier-bar-fill.warn  { background: var(--amber); }
+    .tier-bar-fill.limit { background: var(--red); }
+    .tier-upgrade {
+      display: inline-block; margin-top: 7px;
+      font-size: 10px; font-weight: 600; color: var(--blue);
+      text-decoration: none; cursor: pointer;
+      padding: 2px 7px; border-radius: 4px;
+      border: 1px solid rgba(26,115,232,0.3);
+      background: var(--blue-dim);
+    }
+    .tier-upgrade:hover { background: #d2e3fc; }
+
+    /* ── Buttons ─────────────────────────────────────── */
+    .btn-row { display: flex; gap: 7px; }
+    .btn {
+      flex: 1; padding: 8px 6px; border-radius: 6px;
+      font-size: 12px; font-weight: 600; cursor: pointer; border: none;
+      transition: background 0.15s, opacity 0.15s;
+      display: flex; align-items: center; justify-content: center; gap: 4px;
+      font-family: "Inter", system-ui, sans-serif;
+    }
+    .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .btn-primary {
+      background: var(--blue); color: #fff;
+    }
+    .btn-primary:hover:not(:disabled) { background: #1557b0; }
+
+    .btn-secondary {
+      background: var(--surface); color: var(--text-2);
+      border: 1px solid var(--border-md);
+    }
+    .btn-secondary:hover:not(:disabled) { background: var(--border); }
+
+    .action-msg {
+      font-size: 11px; margin-top: 8px;
+      padding: 6px 10px; border-radius: 6px; display: none; line-height: 1.4;
+    }
+    .action-msg.ok    { background: var(--green-dim); color: var(--green); border: 1px solid #b7dfbc; display: block; }
+    .action-msg.error { background: var(--red-dim);   color: var(--red);   border: 1px solid #f5c6c3; display: block; }
+
+    /* ── Settings rows ───────────────────────────────── */
+    .setting-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 6px 0; border-bottom: 1px solid var(--border);
+      font-size: 12px;
+    }
+    .setting-row:last-child { border-bottom: none; }
+    .setting-key { color: var(--text-3); }
+    .setting-val { color: var(--text); font-weight: 500; font-family: monospace; font-size: 11px; }
+    .edit-link   { font-size: 11px; color: var(--blue); text-decoration: none; cursor: pointer; }
+    .edit-link:hover { text-decoration: underline; }
+
+    /* ── Activity feed ───────────────────────────────── */
+    .activity-item {
+      display: flex; align-items: flex-start; gap: 7px;
+      padding: 6px 0; border-bottom: 1px solid var(--border);
+      font-size: 11px;
+    }
+    .activity-item:last-child { border-bottom: none; }
+    .activity-badge {
+      font-size: 9px; font-weight: 600;
+      padding: 2px 5px; border-radius: 3px; flex-shrink: 0;
+      margin-top: 1px; text-transform: uppercase; letter-spacing: 0.3px;
+    }
+    .badge-ok   { background: var(--green-dim); color: var(--green); }
+    .badge-err  { background: var(--red-dim);   color: var(--red); }
+    .badge-warn { background: var(--amber-dim); color: var(--amber); }
+    .badge-skip { background: var(--surface);   color: var(--text-3); border: 1px solid var(--border-md); }
+    .activity-body { flex: 1; color: var(--text-2); line-height: 1.35; }
+    .activity-time { font-size: 10px; color: var(--text-3); margin-top: 2px; }
+
+    /* ── Needs Review ────────────────────────────────── */
+    .review-banner {
+      background: var(--amber-dim); border: 1px solid #f9d89c;
+      border-radius: 6px; padding: 9px 11px;
+      display: flex; align-items: center; justify-content: space-between;
+      font-size: 12px; color: var(--amber); font-weight: 500;
+    }
+    .review-link { font-size: 11px; color: var(--amber); text-decoration: none; cursor: pointer; font-weight: 600; }
+    .review-link:hover { text-decoration: underline; }
+
+    /* ── SR&ED ───────────────────────────────────────── */
+    .sred-card {
+      background: var(--purple-dim); border: 1px solid #c9b8ff;
+      border-radius: 6px; padding: 9px 11px;
+      font-size: 12px; color: var(--text-2); line-height: 1.45;
+    }
+    .sred-link { color: var(--purple); font-size: 11px; }
+
+    /* ── Skeleton ────────────────────────────────────── */
+    .skeleton {
+      background: linear-gradient(90deg, var(--surface) 25%, var(--border) 50%, var(--surface) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s infinite;
+      border-radius: 4px;
+    }
+    @keyframes shimmer { to { background-position: -200% 0; } }
+    .skel-line { height: 12px; margin-bottom: 8px; }
+    .skel-sm   { width: 55%; }
+    .skel-lg   { width: 100%; }
+
+    /* ── Spinner ─────────────────────────────────────── */
+    .spinner {
+      width: 11px; height: 11px;
+      border: 2px solid rgba(255,255,255,0.4);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    .spinner.light {
+      border: 2px solid var(--border-md);
+      border-top-color: var(--text-2);
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+
+  <!-- ── Header ───────────────────────────────────────────── -->
+  <div class="header-bar">
+    <div class="logo-small">
+      <div class="logo-mark">L</div>
+      <span class="logo-name">Loonie<span>Log</span></span>
+    </div>
+    <div class="header-right">
+      <div class="status-chip">
+        <div class="dot" id="statusDot"></div>
+        <span id="statusText">Loading</span>
+      </div>
+      <button class="width-btn" id="widthBtn" onclick="toggleWidth()" title="Resize sidebar">⟷</button>
+    </div>
+  </div>
+
+  <div class="panel">
+
+    <!-- ── Loading skeleton ──────────────────────────────── -->
+    <div id="loadingState">
+      <div class="card">
+        <div class="skeleton skel-line skel-lg"></div>
+        <div class="skeleton skel-line skel-sm"></div>
+        <div class="skeleton skel-line skel-lg"></div>
+      </div>
+      <div class="card">
+        <div class="skeleton skel-line skel-lg"></div>
+        <div class="skeleton skel-line skel-sm"></div>
+      </div>
+    </div>
+
+    <!-- ── Main content ──────────────────────────────────── -->
+    <div id="mainContent" style="display:none;">
+
+      <!-- 1. Stats ─────────────────────────────────────── -->
+      <div class="stats-card">
+        <div class="receipt-count" id="receiptCount">–</div>
+        <div class="receipt-label">receipts this month</div>
+        <div class="stat-row">
+          <div class="stat-box">
+            <div class="stat-val" id="statExpenses">–</div>
+            <div class="stat-lbl">Expenses</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-val" id="statDeductible">–</div>
+            <div class="stat-lbl">Deductible</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-val" id="statItc">–</div>
+            <div class="stat-lbl">ITC</div>
+          </div>
+        </div>
+        <div class="last-run">Last run: <span id="lastRun">–</span></div>
+        <div id="tierUsageBlock" style="display:none;">
+          <div class="tier-row">
+            <span class="tier-label" id="tierLabel">—</span>
+            <span style="color:var(--text-3)" id="tierRemaining">—</span>
+          </div>
+          <div class="tier-bar-track">
+            <div class="tier-bar-fill" id="tierBarFill" style="width:0%"></div>
+          </div>
+          <a class="tier-upgrade" onclick="openUpgrade()">⭐ Upgrade Plan</a>
+        </div>
+      </div>
+
+      <!-- 2. Quick Actions ──────────────────────────────── -->
+      <div class="card">
+        <div class="section-title">Quick Actions</div>
+        <div class="btn-row">
+          <button class="btn btn-primary"   id="btnRun"  onclick="runNow()">▶ Run Now</button>
+          <button class="btn btn-secondary" id="btnHunt" onclick="huntPast()">📬 Past 90d</button>
+        </div>
+        <div class="action-msg" id="actionMsg"></div>
+      </div>
+
+      <!-- 3. Needs Review ───────────────────────────────── -->
+      <div id="reviewSection" style="display:none;" class="card">
+        <div class="section-title">Needs Attention</div>
+        <div class="review-banner" id="reviewBanner">
+          <span id="reviewText"></span>
+          <a class="review-link" onclick="viewReview()">View →</a>
+        </div>
+      </div>
+
+      <!-- 4. SR&ED ──────────────────────────────────────── -->
+      <div id="sredSection" style="display:none;" class="card">
+        <div class="section-title">SR&ED Opportunity</div>
+        <div class="sred-card" id="sredCard"></div>
+      </div>
+
+      <!-- 5. Settings ───────────────────────────────────── -->
+      <div class="card">
+        <div class="section-title" style="display:flex;justify-content:space-between;">
+          <span>Settings</span>
+          <a class="edit-link" onclick="openSettings()">Edit →</a>
+        </div>
+        <div id="settingsRows"></div>
+      </div>
+
+      <!-- 6. Recent Activity ────────────────────────────── -->
+      <div class="card">
+        <div class="section-title">Recent Activity</div>
+        <div id="activityFeed"></div>
+      </div>
+
+    </div><!-- /mainContent -->
+  </div><!-- /panel -->
+
+<script>
+  var IS_WIDE = <?= isWide ?>;
+
+  // ── Width toggle ──────────────────────────────────────────────────────────
+  function toggleWidth() {
+    google.script.run.reopenDashboard(!IS_WIDE);
+  }
+
+  // ── Helpers ──────────────────────────────────────────────────────────────
+  function fmt(n) {
+    if (n === null || n === undefined || n === "") return "—";
+    return "$" + Number(n).toLocaleString("en-CA", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+
+  function showActionMsg(msg, type) {
+    var el = document.getElementById("actionMsg");
+    el.textContent = msg;
+    el.className   = "action-msg " + (type || "ok");
+    setTimeout(function() { el.className = "action-msg"; }, 6000);
+  }
+
+  function setBusy(busy) {
+    document.getElementById("btnRun").disabled  = busy;
+    document.getElementById("btnHunt").disabled = busy;
+    document.getElementById("btnRun").innerHTML  = busy ? '<div class="spinner"></div> Running…' : '▶ Run Now';
+    if (!busy) document.getElementById("btnHunt").innerHTML = '📬 Past 90d';
+  }
+
+  // ── Load ─────────────────────────────────────────────────────────────────
+  function loadDashboard() {
+    google.script.run
+      .withSuccessHandler(function(data) {
+        if (data && data.error) {
+          document.getElementById("loadingState").innerHTML =
+            '<div class="card" style="color:var(--red);font-size:12px;">Error: ' + data.error + '</div>';
+          return;
+        }
+        render(data);
+        document.getElementById("loadingState").style.display = "none";
+        document.getElementById("mainContent").style.display  = "block";
+      })
+      .withFailureHandler(function(err) {
+        document.getElementById("loadingState").innerHTML =
+          '<div class="card" style="color:var(--red);font-size:12px;">Failed to load: ' + err.message + '</div>';
+      })
+      .getDashboardData();
+  }
+
+  // ── Render ────────────────────────────────────────────────────────────────
+  function render(d) {
+    var configured = d.installComplete && d.aiModel !== "Not set";
+    document.getElementById("statusDot").className   = "dot " + (configured ? "green" : "red");
+    document.getElementById("statusText").textContent = configured ? "Active" : "Setup needed";
+    document.getElementById("widthBtn").title         = IS_WIDE ? "Compact view" : "Wide view";
+    document.getElementById("widthBtn").textContent   = IS_WIDE ? "←" : "⟷";
+
+    document.getElementById("receiptCount").textContent    = d.receiptCountMonth || 0;
+    document.getElementById("statExpenses").textContent    = fmt(d.totalExpensesMonth);
+    document.getElementById("statDeductible").textContent  = fmt(d.totalDeductibleMonth);
+    document.getElementById("statItc").textContent         = fmt(d.totalITCMonth);
+    document.getElementById("lastRun").textContent         = d.lastRun || "Never";
+
+    if (!d.isUnlimited) {
+      var pct  = d.tierPct || 0;
+      var fill = document.getElementById("tierBarFill");
+      fill.style.width = pct + "%";
+      fill.className   = "tier-bar-fill" + (pct >= 100 ? " limit" : pct >= 75 ? " warn" : "");
+      document.getElementById("tierLabel").textContent     = d.tierLabel + " plan";
+      document.getElementById("tierRemaining").textContent = d.tierRemaining + " receipts left";
+      document.getElementById("tierUsageBlock").style.display = "block";
+    }
+
+    if (d.needsReviewCount > 0) {
+      document.getElementById("reviewSection").style.display = "block";
+      document.getElementById("reviewText").textContent =
+        d.needsReviewCount + " receipt" + (d.needsReviewCount > 1 ? "s" : "") + " need your attention";
+    }
+
+    if (d.srEdCount > 0) {
+      var potential = (d.srEdTotal * 0.35).toFixed(2);
+      document.getElementById("sredSection").style.display = "block";
+      document.getElementById("sredCard").innerHTML =
+        "💡 <strong>" + d.srEdCount + " expense" + (d.srEdCount > 1 ? "s" : "") +
+        "</strong> may qualify for SR&ED (~$" +
+        Number(potential).toLocaleString("en-CA", {minimumFractionDigits:2}) + " ITC). " +
+        '<a class="sred-link" href="https://www.canada.ca/en/revenue-agency/services/scientific-research-experimental-development-tax-incentive-program.html" target="_blank">Learn more →</a>';
+    }
+
+    var settingsHtml = [
+      ["AI Model",       d.aiModel       || "—"],
+      ["Province",       d.province      || "—"],
+      ["API Key",        d.apiKeyMasked  || "—"],
+      ["Filters Active", (d.filterCount  || 0) + " active"]
+    ].map(function(r) {
+      return '<div class="setting-row"><span class="setting-key">' + r[0] +
+             '</span><span class="setting-val">' + r[1] + '</span></div>';
+    }).join("");
+    document.getElementById("settingsRows").innerHTML = settingsHtml;
+
+    var log  = d.recentAuditLog || [];
+    var feed = "";
+    if (log.length === 0) {
+      feed = '<p style="font-size:11px;color:var(--text-3);text-align:center;padding:8px 0;">No activity yet</p>';
+    } else {
+      for (var i = 0; i < log.length; i++) {
+        var entry = log[i];
+        var s     = (entry.status || "OK").toUpperCase();
+        var cls   = s === "OK" ? "badge-ok" : s === "ERROR" ? "badge-err" : s === "SKIP" ? "badge-skip" : "badge-warn";
+        feed += '<div class="activity-item">' +
+          '<span class="activity-badge ' + cls + '">' + s + '</span>' +
+          '<div class="activity-body">' +
+            '<div>' + esc(entry.func || "") + '</div>' +
+            '<div style="color:var(--text-3);">' + esc((entry.detail || "").slice(0, 80)) + '</div>' +
+            '<div class="activity-time">' + esc(entry.timestamp || "") + '</div>' +
+          '</div></div>';
+      }
+    }
+    document.getElementById("activityFeed").innerHTML = feed;
+  }
+
+  function esc(s) {
+    return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+  }
+
+  // ── Actions ──────────────────────────────────────────────────────────────
+  function runNow() {
+    setBusy(true);
+    google.script.run
+      .withSuccessHandler(function(count) {
+        setBusy(false);
+        showActionMsg("Done — " + (count || 0) + " receipt(s) processed.", "ok");
+        loadDashboard();
+      })
+      .withFailureHandler(function(err) {
+        setBusy(false);
+        showActionMsg("Error: " + (err.message || String(err)), "error");
+      })
+      .runProcessor();
+  }
+
+  function huntPast() {
+    setBusy(true);
+    document.getElementById("btnHunt").innerHTML = '<div class="spinner light"></div> Scanning…';
+    google.script.run
+      .withSuccessHandler(function(result) {
+        setBusy(false);
+        showActionMsg("Backfill done — " + ((result && result.processed) || 0) + " receipt(s) found.", "ok");
+        loadDashboard();
+      })
+      .withFailureHandler(function(err) {
+        setBusy(false);
+        showActionMsg("Error: " + (err.message || String(err)), "error");
+      })
+      .huntPastReceipts();
+  }
+
+  function viewReview()   { google.script.run.selectSheet("Needs Review"); }
+  function openSettings() { google.script.run.showSettings(); }
+  function openUpgrade()  { google.script.run.showUpgradePrompt(); }
+
+  loadDashboard();
+</script>
+</body>
+</html>

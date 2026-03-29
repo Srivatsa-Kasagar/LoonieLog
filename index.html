@@ -1,0 +1,1880 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="LoonieLog — AI expense agent for Canadian freelancers. Runs inside Google Workspace. Hunts receipts, extracts CRA T2125 data, logs everything to Google Sheets. Your data never leaves your Google account.">
+  <meta property="og:title" content="LoonieLog — AI Expense Agent for Canadian Freelancers">
+  <meta property="og:description" content="A mini AI agent that lives in Google Sheets. Hunts receipts, applies CRA rules, captures your ITC — automatically.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://loonielog.ca/og-image.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://loonielog.ca/og-image.png">
+  <title>LoonieLog — AI Expense Agent for Canadian Freelancers</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+/* ── Design tokens ──────────────────────────────────────── */
+:root {
+  --bg:           #050816;
+  --bg-1:         #090e1f;
+  --bg-2:         #0e1428;
+  --bg-card:      rgba(255,255,255,0.035);
+  --bg-card-hover:rgba(255,255,255,0.058);
+
+  --border:       rgba(255,255,255,0.07);
+  --border-md:    rgba(255,255,255,0.12);
+  --border-hi:    rgba(255,255,255,0.20);
+
+  --green:        #00e589;
+  --green-dark:   #00b368;
+  --green-dim:    rgba(0,229,137,0.10);
+  --green-glow:   rgba(0,229,137,0.24);
+  --green-glow2:  rgba(0,229,137,0.07);
+
+  --cyan:         #22d3ee;
+  --cyan-dim:     rgba(34,211,238,0.10);
+  --purple:       #a855f7;
+  --purple-dim:   rgba(168,85,247,0.10);
+  --purple-glow:  rgba(168,85,247,0.18);
+  --indigo:       #818cf8;
+  --indigo-dim:   rgba(129,140,248,0.10);
+  --amber:        #fbbf24;
+  --red:          #f87171;
+
+  --text:         #f1f5f9;
+  --text-2:       #94a3b8;
+  --text-3:       #475569;
+  --text-4:       #1e293b;
+
+  --radius:       12px;
+  --radius-lg:    18px;
+  --radius-xl:    26px;
+
+  --grad-brand: linear-gradient(135deg, var(--green) 0%, var(--cyan) 50%, var(--purple) 100%);
+}
+
+/* ── Reset ──────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--text);
+  background: var(--bg);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+h1,h2,h3,h4 { line-height: 1.2; font-weight: 700; color: var(--text); }
+a { text-decoration: none; color: inherit; }
+code, .mono { font-family: "JetBrains Mono", monospace; }
+
+/* ── Dot grid background ────────────────────────────────── */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image: radial-gradient(circle, rgba(255,255,255,0.045) 1px, transparent 1px);
+  background-size: 30px 30px;
+  pointer-events: none;
+  z-index: 0;
+}
+/* Ambient colour wash across the whole page */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 50% at 20% 10%, rgba(168,85,247,0.04) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 80% 80%, rgba(0,229,137,0.04) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── Global layout ──────────────────────────────────────── */
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 24px;
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Gradient text ──────────────────────────────────────── */
+.grad-text {
+  background: linear-gradient(135deg, var(--green) 0%, var(--cyan) 55%, var(--purple) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.grad-text-warm {
+  background: linear-gradient(135deg, #fff 0%, var(--green) 60%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── Glow button ────────────────────────────────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 24px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: "Inter", sans-serif;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+  position: relative;
+  text-decoration: none;
+}
+.btn-glow {
+  background: linear-gradient(135deg, var(--green) 0%, #00c8d4 100%);
+  color: #050816;
+  font-weight: 700;
+  box-shadow: 0 4px 24px rgba(0,229,137,0.20), 0 1px 0 rgba(255,255,255,0.12) inset;
+}
+.btn-glow:hover {
+  background: linear-gradient(135deg, #00ff99 0%, var(--cyan) 100%);
+  box-shadow: 0 6px 36px rgba(0,229,137,0.32), 0 0 60px rgba(0,229,137,0.10);
+  transform: translateY(-2px);
+}
+.btn-lg { padding: 14px 32px; font-size: 16px; border-radius: 12px; }
+.btn-xl { padding: 16px 38px; font-size: 17px; border-radius: 14px; }
+.btn-ghost {
+  background: var(--bg-card);
+  color: var(--text-2);
+  border: 1px solid var(--border-md);
+}
+.btn-ghost:hover { background: var(--bg-card-hover); color: var(--text); border-color: var(--border-hi); }
+
+/* ── Badge ──────────────────────────────────────────────── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 14px;
+  border-radius: 100px;
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+.badge-green {
+  background: var(--green-dim);
+  color: var(--green);
+  border: 1px solid rgba(0,220,130,0.25);
+}
+.badge-dot {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 6px var(--green);
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+@keyframes pulse-dot {
+  0%,100% { opacity:1; box-shadow: 0 0 6px var(--green); }
+  50%      { opacity:0.5; box-shadow: 0 0 14px var(--green); }
+}
+
+/* ── Section labels ─────────────────────────────────────── */
+.eyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--green);
+  margin-bottom: 12px;
+}
+.section-title {
+  font-size: clamp(28px, 4vw, 42px);
+  letter-spacing: -0.8px;
+  margin-bottom: 16px;
+}
+.section-sub {
+  font-size: 17px;
+  color: var(--text-2);
+  max-width: 560px;
+  line-height: 1.7;
+}
+
+/* ══════════════════════════════════════════════════════════
+   NAV
+══════════════════════════════════════════════════════════ */
+nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  border-bottom: 1px solid var(--border);
+  background: rgba(3,7,18,0.82);
+  backdrop-filter: blur(20px) saturate(1.4);
+}
+.nav-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 62px;
+}
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  color: var(--text);
+}
+.logo-mark {
+  width: 34px; height: 34px;
+  border-radius: 9px;
+  background: linear-gradient(135deg, var(--green) 0%, var(--cyan) 55%, var(--purple) 100%);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px; font-weight: 900; color: #050816;
+  box-shadow: 0 0 18px rgba(0,229,137,0.30), 0 0 40px rgba(168,85,247,0.12);
+}
+.logo-name span { color: var(--green); }
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  list-style: none;
+}
+.nav-links a {
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--text-2);
+  transition: color 0.15s;
+}
+.nav-links a:hover { color: var(--text); }
+.nav-cta { display: flex; align-items: center; gap: 12px; }
+
+/* ══════════════════════════════════════════════════════════
+   HERO
+══════════════════════════════════════════════════════════ */
+.hero {
+  padding: 110px 0 90px;
+  position: relative;
+  overflow: hidden;
+}
+/* Ambient glow orbs */
+.hero::before {
+  content: "";
+  position: absolute;
+  top: -250px; right: -120px;
+  width: 800px; height: 800px;
+  background: radial-gradient(circle, rgba(168,85,247,0.09) 0%, rgba(0,229,137,0.04) 40%, transparent 70%);
+  pointer-events: none;
+}
+.hero::after {
+  content: "";
+  position: absolute;
+  bottom: -200px; left: -180px;
+  width: 650px; height: 650px;
+  background: radial-gradient(circle, rgba(0,229,137,0.07) 0%, rgba(34,211,238,0.03) 40%, transparent 70%);
+  pointer-events: none;
+}
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 64px;
+  align-items: center;
+}
+.hero-badge { margin-bottom: 22px; }
+.hero h1 {
+  font-size: clamp(38px, 5.5vw, 62px);
+  letter-spacing: -2px;
+  margin-bottom: 20px;
+  line-height: 1.08;
+}
+.hero-sub {
+  font-size: 17px;
+  color: var(--text-2);
+  line-height: 1.75;
+  margin-bottom: 36px;
+  max-width: 480px;
+}
+.hero-cta { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.hero-micro {
+  margin-top: 22px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.hero-micro-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text-3);
+  font-weight: 500;
+}
+.hero-micro-item .tick { color: var(--green); font-size: 10px; }
+
+/* ── Agent Terminal Card ────────────────────────────────── */
+.agent-card {
+  background: var(--bg-1);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  position: relative;
+  box-shadow:
+    0 40px 80px rgba(0,0,0,0.65),
+    0 0 80px rgba(168,85,247,0.07);
+}
+/* Gradient border via pseudo-element */
+.agent-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(0,229,137,0.4), rgba(34,211,238,0.2), rgba(168,85,247,0.3));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+.agent-titlebar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 13px 16px;
+  border-bottom: 1px solid var(--border);
+  background: rgba(255,255,255,0.02);
+}
+.tbar-dots { display: flex; gap: 6px; }
+.tbar-dot { width: 10px; height: 10px; border-radius: 50%; }
+.tbar-name {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  color: var(--text-3);
+  margin-left: 4px;
+}
+.agent-status {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--green);
+  font-family: "JetBrains Mono", monospace;
+}
+
+.agent-body { padding: 16px; }
+
+/* Stat row */
+.agent-stat-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.agent-stat {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+.agent-stat-val {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--green);
+  letter-spacing: -0.5px;
+  font-family: "JetBrains Mono", monospace;
+}
+.agent-stat-label {
+  font-size: 10px;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 2px;
+}
+
+/* Log feed */
+.agent-log {
+  background: #020609;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  line-height: 1.7;
+  max-height: 240px;
+  overflow: hidden;
+}
+.log-line {
+  display: flex;
+  gap: 8px;
+  opacity: 0;
+  transform: translateY(4px);
+}
+.log-time { color: var(--text-3); flex-shrink: 0; }
+.log-ok   { color: var(--green); }
+.log-info { color: var(--cyan); }
+.log-muted{ color: var(--text-3); }
+.log-warn { color: var(--amber); }
+.log-indent { padding-left: 52px; color: var(--text-3); }
+
+/* Animate log lines */
+.log-line:nth-child(1)  { animation: logfade 0.4s 0.3s  ease forwards; }
+.log-line:nth-child(2)  { animation: logfade 0.4s 0.8s  ease forwards; }
+.log-line:nth-child(3)  { animation: logfade 0.4s 1.3s  ease forwards; }
+.log-line:nth-child(4)  { animation: logfade 0.4s 1.6s  ease forwards; }
+.log-line:nth-child(5)  { animation: logfade 0.4s 2.1s  ease forwards; }
+.log-line:nth-child(6)  { animation: logfade 0.4s 2.5s  ease forwards; }
+.log-line:nth-child(7)  { animation: logfade 0.4s 3.0s  ease forwards; }
+.log-line:nth-child(8)  { animation: logfade 0.4s 3.4s  ease forwards; }
+.log-line:nth-child(9)  { animation: logfade 0.4s 3.8s  ease forwards; }
+.log-line:nth-child(10) { animation: logfade 0.4s 4.2s  ease forwards; }
+.log-line:nth-child(11) { animation: logfade 0.4s 4.7s  ease forwards; }
+.log-line:nth-child(12) { animation: logfade 0.4s 5.1s  ease forwards; }
+
+@keyframes logfade {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Blinking cursor */
+.cursor {
+  display: inline-block;
+  width: 7px; height: 13px;
+  background: var(--green);
+  border-radius: 1px;
+  margin-left: 2px;
+  vertical-align: middle;
+  animation: blink 1s step-end infinite;
+  opacity: 0;
+  animation-delay: 5.5s;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+/* Agent pipeline footer */
+.agent-pipeline {
+  margin-top: 12px;
+  display: flex;
+  align-items: center;
+  gap: 0;
+  justify-content: center;
+}
+.pipe-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  flex: 1;
+}
+.pipe-icon {
+  width: 34px; height: 34px;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  border: 1px solid var(--border-md);
+  background: var(--bg-card);
+}
+.pipe-icon.active {
+  border-color: rgba(0,220,130,0.4);
+  background: var(--green-dim);
+  box-shadow: 0 0 12px var(--green-glow2);
+}
+.pipe-label { font-size: 9px; color: var(--text-3); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+.pipe-arrow {
+  width: 28px;
+  height: 1px;
+  background: linear-gradient(90deg, var(--border-md), var(--green), var(--border-md));
+  flex-shrink: 0;
+  position: relative;
+  top: -10px;
+  overflow: visible;
+}
+.pipe-arrow::after {
+  content: "";
+  position: absolute;
+  right: -1px;
+  top: -3px;
+  width: 0; height: 0;
+  border-top: 4px solid transparent;
+  border-bottom: 4px solid transparent;
+  border-left: 6px solid var(--green);
+}
+
+/* Flowing dot animation */
+.pipe-flow {
+  position: absolute;
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 6px var(--green);
+  top: -2px;
+  left: 0;
+  animation: flow 3s ease-in-out infinite;
+}
+@keyframes flow {
+  0%   { left:0; opacity:0; }
+  10%  { opacity:1; }
+  90%  { opacity:1; }
+  100% { left:100%; opacity:0; }
+}
+
+/* ══════════════════════════════════════════════════════════
+   WORKSPACE STRIP
+══════════════════════════════════════════════════════════ */
+.workspace-strip {
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-1);
+  padding: 22px 0;
+}
+.ws-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.ws-label {
+  font-size: 11px;
+  color: var(--text-3);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-right: 8px;
+}
+.ws-chip {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 14px;
+  border-radius: 100px;
+  border: 1px solid var(--border-md);
+  background: var(--bg-card);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-2);
+  transition: all 0.2s;
+}
+.ws-chip:hover { border-color: var(--green); color: var(--text); background: var(--green-dim); }
+.ws-chip-icon { font-size: 14px; }
+.ws-divider { color: var(--text-3); font-size: 14px; }
+
+/* ══════════════════════════════════════════════════════════
+   HOW IT WORKS — AGENT PIPELINE
+══════════════════════════════════════════════════════════ */
+.how {
+  padding: 110px 0;
+}
+.how-header { text-align: center; margin-bottom: 72px; }
+
+.pipeline-visual {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  align-items: start;
+  gap: 0;
+  margin-bottom: 64px;
+  position: relative;
+}
+/* connecting line */
+.pipeline-visual::before {
+  content: "";
+  position: absolute;
+  top: 28px;
+  left: 10%;
+  right: 10%;
+  height: 1px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    var(--border-md) 10%,
+    var(--green) 30%,
+    var(--cyan) 60%,
+    var(--border-md) 90%,
+    transparent 100%
+  );
+}
+
+.pipe-node {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 0 8px;
+  position: relative;
+  z-index: 1;
+}
+.pipe-node-icon {
+  width: 56px; height: 56px;
+  border-radius: 16px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px;
+  border: 1px solid var(--border-md);
+  background: var(--bg-1);
+  margin-bottom: 14px;
+  transition: all 0.3s;
+}
+.pipe-node:hover .pipe-node-icon {
+  border-color: var(--green);
+  box-shadow: 0 0 20px var(--green-glow2);
+  transform: translateY(-3px);
+}
+.pipe-node-icon.glow-green { border-color: rgba(0,220,130,0.4); background: var(--green-dim); }
+.pipe-node-icon.glow-cyan  { border-color: rgba(34,211,238,0.35); background: var(--cyan-dim); }
+.pipe-node-icon.glow-indigo{ border-color: rgba(129,140,248,0.35); background: var(--indigo-dim); }
+.pipe-node-title { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 5px; }
+.pipe-node-desc  { font-size: 11.5px; color: var(--text-3); line-height: 1.5; }
+.pipe-connector {
+  display: flex; align-items: center; justify-content: center;
+  padding-top: 14px;
+}
+.pipe-connector svg { color: var(--text-3); width: 16px; height: 16px; }
+
+/* Step detail cards */
+.steps-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+.step-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 26px;
+  transition: all 0.25s;
+  position: relative;
+  overflow: hidden;
+}
+.step-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, var(--green-dim) 0%, transparent 60%);
+  opacity: 0;
+  transition: opacity 0.25s;
+}
+.step-card:hover {
+  border-color: rgba(0,220,130,0.25);
+  background: var(--bg-card-hover);
+  transform: translateY(-2px);
+}
+.step-card:hover::before { opacity: 1; }
+.step-num-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px; height: 28px;
+  border-radius: 8px;
+  background: var(--green-dim);
+  border: 1px solid rgba(0,220,130,0.25);
+  color: var(--green);
+  font-size: 12px;
+  font-weight: 800;
+  font-family: "JetBrains Mono", monospace;
+  margin-bottom: 14px;
+}
+.step-card h3 { font-size: 15px; color: var(--text); margin-bottom: 8px; }
+.step-card p  { font-size: 13px; color: var(--text-2); line-height: 1.65; }
+
+/* ══════════════════════════════════════════════════════════
+   PRICING
+══════════════════════════════════════════════════════════ */
+.pricing {
+  padding: 110px 0 100px;
+  position: relative;
+  overflow: hidden;
+}
+.pricing::before {
+  content: "";
+  position: absolute;
+  top: -200px; left: 50%;
+  transform: translateX(-50%);
+  width: 900px; height: 600px;
+  background: radial-gradient(ellipse at center,
+    rgba(168,85,247,0.06) 0%, rgba(0,229,137,0.04) 40%, transparent 70%);
+  pointer-events: none;
+}
+.pricing-header { text-align: center; margin-bottom: 64px; }
+.pricing-header .section-sub { margin-top: 12px; }
+.pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  align-items: start;
+}
+.price-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-md);
+  border-radius: var(--radius-xl);
+  padding: 32px 28px;
+  position: relative;
+  transition: border-color 0.2s, transform 0.2s;
+}
+.price-card:hover { border-color: var(--border-hi); transform: translateY(-3px); }
+.price-card-featured {
+  background: var(--bg-1);
+  border-color: rgba(0,229,137,0.30);
+  box-shadow: 0 0 0 1px rgba(0,229,137,0.08), 0 24px 60px rgba(0,0,0,0.4);
+}
+.price-card-featured:hover { border-color: rgba(0,229,137,0.50); }
+.price-popular-badge {
+  position: absolute;
+  top: -12px; left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, var(--green), var(--cyan));
+  color: #050816;
+  font-size: 10.5px; font-weight: 800;
+  letter-spacing: 0.8px; text-transform: uppercase;
+  padding: 4px 14px; border-radius: 100px; white-space: nowrap;
+}
+.price-tier-badge {
+  font-size: 12px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 1px;
+  color: var(--cyan); margin-bottom: 14px;
+}
+.price-amount {
+  font-size: 44px; font-weight: 800;
+  letter-spacing: -2px; color: var(--text);
+  line-height: 1; margin-bottom: 10px;
+}
+.price-period { font-size: 18px; font-weight: 500; letter-spacing: 0; color: var(--text-3); }
+.price-tagline { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 8px; line-height: 1.4; }
+.price-persona {
+  font-size: 12.5px; color: var(--text-3); line-height: 1.6;
+  margin-bottom: 22px; padding-bottom: 22px; border-bottom: 1px solid var(--border);
+}
+.price-features { list-style: none; padding: 0; margin: 0 0 26px; display: flex; flex-direction: column; gap: 10px; }
+.price-features li { font-size: 13px; color: var(--text-2); display: flex; align-items: flex-start; gap: 9px; line-height: 1.45; }
+.pf-check { color: var(--green); font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+.pf-muted { color: var(--text-3) !important; }
+.pf-muted span { color: var(--text-3); }
+.pricing-note { text-align: center; margin-top: 40px; font-size: 12.5px; color: var(--text-3); }
+
+/* ══════════════════════════════════════════════════════════
+   FEATURES
+══════════════════════════════════════════════════════════ */
+.features {
+  padding: 110px 0;
+  background: var(--bg-1);
+  position: relative;
+  overflow: hidden;
+}
+.features::before {
+  content: "";
+  position: absolute;
+  top: -300px; right: -200px;
+  width: 800px; height: 800px;
+  background: radial-gradient(circle, rgba(129,140,248,0.04) 0%, transparent 65%);
+  pointer-events: none;
+}
+.features-header { margin-bottom: 56px; }
+.features-header .section-sub { margin-top: 12px; }
+
+.feat-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+.feat-cell {
+  background: var(--bg-1);
+  padding: 28px 24px;
+  transition: background 0.2s;
+  position: relative;
+}
+.feat-cell:hover { background: var(--bg-2); }
+.feat-cell::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, var(--green-dim) 0%, transparent 50%);
+  opacity: 0;
+  transition: opacity 0.2s;
+  pointer-events: none;
+}
+.feat-cell:hover::after { opacity: 1; }
+.feat-icon {
+  font-size: 24px;
+  margin-bottom: 12px;
+  display: block;
+}
+.feat-cell h3 {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 7px;
+}
+.feat-cell p {
+  font-size: 12.5px;
+  color: var(--text-2);
+  line-height: 1.65;
+}
+.feat-tag {
+  display: inline-block;
+  margin-top: 10px;
+  font-size: 10.5px;
+  font-weight: 600;
+  font-family: "JetBrains Mono", monospace;
+  padding: 3px 9px;
+  border-radius: 100px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-md);
+  color: var(--text-3);
+}
+.feat-tag.green  { background: var(--green-dim);  border-color: rgba(0,220,130,0.2);   color: var(--green); }
+.feat-tag.cyan   { background: var(--cyan-dim);   border-color: rgba(34,211,238,0.2);  color: var(--cyan); }
+.feat-tag.indigo { background: var(--indigo-dim); border-color: rgba(129,140,248,0.2); color: var(--indigo); }
+
+/* ══════════════════════════════════════════════════════════
+   FOR WHO
+══════════════════════════════════════════════════════════ */
+.forwho {
+  padding: 110px 0;
+}
+.forwho-header { text-align: center; margin-bottom: 56px; }
+.forwho-header .section-sub { margin: 12px auto 0; }
+
+.persona-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+.persona-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 28px;
+  transition: all 0.25s;
+  position: relative;
+  overflow: hidden;
+}
+.persona-card:hover {
+  border-color: rgba(0,220,130,0.25);
+  transform: translateY(-3px);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.3), 0 0 0 1px rgba(0,220,130,0.1);
+}
+.persona-avatar {
+  font-size: 32px;
+  margin-bottom: 14px;
+  display: block;
+}
+.persona-role {
+  display: inline-block;
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+  color: var(--green);
+  margin-bottom: 8px;
+}
+.persona-card h3 { font-size: 16px; color: var(--text); margin-bottom: 10px; }
+.persona-card p  { font-size: 13px; color: var(--text-2); line-height: 1.65; }
+.persona-quote {
+  margin-top: 16px;
+  padding: 11px 14px;
+  border-left: 2px solid rgba(0,220,130,0.35);
+  background: var(--green-dim);
+  border-radius: 0 8px 8px 0;
+  font-size: 12px;
+  color: var(--text-2);
+  font-style: italic;
+  line-height: 1.5;
+}
+
+/* ══════════════════════════════════════════════════════════
+   PRIVACY / ARCHITECTURE
+══════════════════════════════════════════════════════════ */
+.privacy {
+  padding: 110px 0;
+  background: var(--bg-1);
+  position: relative;
+  overflow: hidden;
+}
+.privacy::after {
+  content: "";
+  position: absolute;
+  bottom: -200px; left: -200px;
+  width: 700px; height: 700px;
+  background: radial-gradient(circle, rgba(0,220,130,0.05) 0%, transparent 65%);
+  pointer-events: none;
+}
+.privacy-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 72px;
+  align-items: center;
+}
+.privacy h2 { margin-bottom: 16px; }
+.privacy-sub { font-size: 16px; color: var(--text-2); line-height: 1.75; margin-bottom: 28px; }
+.privacy-checks { display: flex; flex-direction: column; gap: 10px; }
+.priv-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 13.5px;
+  color: var(--text-2);
+  line-height: 1.5;
+}
+.priv-icon {
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  background: var(--green-dim);
+  border: 1px solid rgba(0,220,130,0.3);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--green);
+  font-size: 9px;
+  font-weight: 900;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.arch-diagram {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.arch-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.arch-box {
+  flex: 1;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12.5px;
+  color: var(--text-2);
+  font-weight: 500;
+  transition: all 0.2s;
+}
+.arch-box:hover { border-color: var(--border-md); color: var(--text); }
+.arch-box.locked {
+  border-color: rgba(0,220,130,0.25);
+  background: var(--green-dim);
+}
+.arch-box.locked .arch-label { color: var(--text); }
+.arch-box-icon { font-size: 18px; flex-shrink: 0; }
+.arch-label { font-weight: 600; }
+.arch-sub   { font-size: 10.5px; color: var(--text-3); margin-top: 1px; }
+.arch-lock {
+  margin-left: auto;
+  font-size: 10px;
+  font-weight: 700;
+  font-family: "JetBrains Mono", monospace;
+  padding: 3px 8px;
+  border-radius: 100px;
+  background: var(--green-dim);
+  color: var(--green);
+  flex-shrink: 0;
+}
+.arch-arrow {
+  font-size: 12px;
+  color: var(--text-3);
+  flex-shrink: 0;
+  padding: 0 2px;
+}
+.arch-dashed {
+  border: 1px dashed var(--border-md);
+  background: transparent;
+}
+.arch-divider-label {
+  text-align: center;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-3);
+  padding: 4px 0;
+}
+.arch-external-note {
+  text-align: center;
+  font-size: 11px;
+  color: var(--text-3);
+  margin-top: 6px;
+  font-family: "JetBrains Mono", monospace;
+}
+
+/* ══════════════════════════════════════════════════════════
+   INSTALL
+══════════════════════════════════════════════════════════ */
+.install {
+  padding: 110px 0;
+}
+.install-grid {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 72px;
+  align-items: start;
+}
+.install h2 { margin-bottom: 16px; }
+.install-sub { font-size: 16px; color: var(--text-2); line-height: 1.7; margin-bottom: 36px; }
+.install-steps { display: flex; flex-direction: column; gap: 18px; margin-bottom: 36px; }
+.i-step {
+  display: flex;
+  gap: 14px;
+}
+.i-step-num {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: var(--green);
+  color: #030712;
+  font-size: 12px;
+  font-weight: 800;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+  font-family: "JetBrains Mono", monospace;
+}
+.i-step-body { font-size: 14px; color: var(--text-2); line-height: 1.6; }
+.i-step-body strong { color: var(--text); }
+.install-note { font-size: 12px; color: var(--text-3); margin-top: 14px; }
+
+.req-panel {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+.req-panel-header {
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  background: var(--bg-card);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.req-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border);
+  transition: background 0.15s;
+}
+.req-item:last-child { border-bottom: none; }
+.req-item:hover { background: var(--bg-card-hover); }
+.req-icon { font-size: 20px; flex-shrink: 0; }
+.req-text strong { display: block; font-size: 13px; color: var(--text); font-weight: 600; }
+.req-text span   { font-size: 11px; color: var(--text-3); }
+.req-check { margin-left: auto; color: var(--green); font-size: 15px; font-weight: 700; flex-shrink: 0; }
+.req-check.amber { color: var(--amber); }
+
+/* ══════════════════════════════════════════════════════════
+   CTA
+══════════════════════════════════════════════════════════ */
+.cta-section {
+  padding: 110px 0;
+  background: var(--bg-1);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.cta-glow {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 600px; height: 300px;
+  background: radial-gradient(ellipse, rgba(0,220,130,0.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+.cta-section h2 { font-size: clamp(32px, 5vw, 50px); letter-spacing: -1.5px; margin-bottom: 16px; }
+.cta-section p  { font-size: 17px; color: var(--text-2); margin-bottom: 40px; }
+.cta-btns { display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap; }
+.cta-note { margin-top: 20px; font-size: 12.5px; color: var(--text-3); }
+
+/* ══════════════════════════════════════════════════════════
+   FAQ
+══════════════════════════════════════════════════════════ */
+.faq { padding: 110px 0; }
+.faq-header { text-align: center; margin-bottom: 56px; }
+.faq-header .section-sub { margin: 12px auto 0; }
+.faq-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+.faq-item {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 22px;
+  transition: all 0.2s;
+}
+.faq-item:hover { border-color: var(--border-md); background: var(--bg-card-hover); }
+.faq-q { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+.faq-a { font-size: 13px; color: var(--text-2); line-height: 1.65; }
+
+/* ══════════════════════════════════════════════════════════
+   FOOTER
+══════════════════════════════════════════════════════════ */
+footer {
+  background: var(--bg);
+  border-top: 1px solid var(--border);
+  padding: 56px 0 32px;
+}
+.footer-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 48px;
+  margin-bottom: 48px;
+}
+.footer-brand p {
+  font-size: 13px;
+  color: var(--text-3);
+  line-height: 1.6;
+  margin-top: 12px;
+  max-width: 240px;
+}
+.footer-col h4 {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-3);
+  margin-bottom: 14px;
+}
+.footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 9px; }
+.footer-col a { font-size: 13px; color: var(--text-3); transition: color 0.15s; }
+.footer-col a:hover { color: var(--text); }
+.footer-bottom {
+  border-top: 1px solid var(--border);
+  padding-top: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.footer-copy { font-size: 12px; color: var(--text-3); }
+.footer-flags { display: flex; align-items: center; gap: 6px; font-size: 11.5px; color: var(--text-3); }
+.footer-flags .dot { width: 2px; height: 2px; border-radius: 50%; background: var(--text-3); }
+
+/* ── Social FAB ─────────────────────────────────────────── */
+.social-fab {
+  position: fixed;
+  bottom: 24px; right: 24px;
+  display: flex; flex-direction: column; gap: 8px;
+  z-index: 90;
+}
+.fab-btn {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 700;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+  border: 1px solid var(--border-md);
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  text-decoration: none;
+}
+.fab-btn:hover { transform: scale(1.1); }
+.fab-x  { background: #000; color: #fff; }
+.fab-li { background: #0a66c2; color: #fff; }
+
+/* ── Responsive ─────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .hero-grid      { grid-template-columns: 1fr; }
+  .agent-card     { display: none; }
+  .pipeline-visual{ grid-template-columns: 1fr; }
+  .pipeline-visual::before { display: none; }
+  .steps-grid     { grid-template-columns: 1fr; }
+  .feat-grid      { grid-template-columns: 1fr 1fr; }
+  .pricing-grid   { grid-template-columns: 1fr; }
+  .persona-grid   { grid-template-columns: 1fr; }
+  .privacy-grid   { grid-template-columns: 1fr; }
+  .install-grid   { grid-template-columns: 1fr; }
+  .faq-grid       { grid-template-columns: 1fr; }
+  .footer-grid    { grid-template-columns: 1fr 1fr; }
+  .nav-links      { display: none; }
+  .social-fab     { display: none; }
+}
+@media (max-width: 600px) {
+  .feat-grid  { grid-template-columns: 1fr; }
+  .footer-grid{ grid-template-columns: 1fr; }
+}
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════
+     NAV
+══════════════════════════════════════════════════════ -->
+<nav>
+  <div class="container">
+    <div class="nav-inner">
+      <a href="#" class="logo">
+        <div class="logo-mark">L</div>
+        <span class="logo-name">Loonie<span>Log</span></span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="#pricing">Pricing</a></li>
+        <li><a href="#features">Features</a></li>
+        <li><a href="#for-who">Who it's for</a></li>
+        <li><a href="#privacy">Privacy</a></li>
+        <li><a href="#faq">FAQ</a></li>
+      </ul>
+      <div class="nav-cta">
+        <a href="#install" class="btn btn-glow" style="padding:9px 20px;font-size:13px;">Get Started Free →</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- ══════════════════════════════════════════════════════
+     HERO
+══════════════════════════════════════════════════════ -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-grid">
+
+      <!-- Left: copy -->
+      <div>
+        <div class="hero-badge">
+          <span class="badge badge-green">
+            <span class="badge-dot"></span>
+            Agent running · Google Workspace
+          </span>
+        </div>
+        <h1>The AI that does<br><span class="grad-text">your taxes</span><br>while you sleep</h1>
+        <p class="hero-sub">
+          LoonieLog is a mini AI agent that lives inside your Google Sheets.
+          It hunts receipts in Gmail, extracts CRA T2125 data with Gemini or Claude,
+          and logs everything automatically — every 24 hours, zero effort.
+        </p>
+        <div class="hero-cta">
+          <a href="#install" class="btn btn-glow btn-xl">📥 Install Free on Google Sheets</a>
+          <a href="#how-it-works" class="btn btn-ghost btn-lg">See the agent →</a>
+        </div>
+        <div class="hero-micro">
+          <div class="hero-micro-item"><span class="tick">✦</span> No server</div>
+          <div class="hero-micro-item"><span class="tick">✦</span> No signup</div>
+          <div class="hero-micro-item"><span class="tick">✦</span> CRA T2125 compliant</div>
+          <div class="hero-micro-item"><span class="tick">✦</span> All 13 provinces</div>
+        </div>
+      </div>
+
+      <!-- Right: Agent terminal -->
+      <div class="agent-card">
+        <div class="agent-titlebar">
+          <div class="tbar-dots">
+            <div class="tbar-dot" style="background:#ff5f57"></div>
+            <div class="tbar-dot" style="background:#febc2e"></div>
+            <div class="tbar-dot" style="background:#28c840"></div>
+          </div>
+          <span class="tbar-name">loonielog-agent · cycle #247</span>
+          <div class="agent-status">
+            <span style="width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);display:inline-block;animation:pulse-dot 2s infinite;"></span>
+            ACTIVE
+          </div>
+        </div>
+
+        <div class="agent-body">
+          <!-- Stats -->
+          <div class="agent-stat-row">
+            <div class="agent-stat">
+              <div class="agent-stat-val">$847</div>
+              <div class="agent-stat-label">logged this month</div>
+            </div>
+            <div class="agent-stat">
+              <div class="agent-stat-val">$34.21</div>
+              <div class="agent-stat-label">ITC captured</div>
+            </div>
+            <div class="agent-stat">
+              <div class="agent-stat-val">12</div>
+              <div class="agent-stat-label">receipts found</div>
+            </div>
+          </div>
+
+          <!-- Log -->
+          <div class="agent-log">
+            <div class="log-line">
+              <span class="log-time">[06:32:01]</span>
+              <span class="log-info">▶ Cycle started · scanning Gmail for To_Log label</span>
+            </div>
+            <div class="log-line">
+              <span class="log-time">[06:32:02]</span>
+              <span class="log-muted">→ Found 3 unprocessed threads</span>
+            </div>
+            <div class="log-line">
+              <span class="log-time">[06:32:03]</span>
+              <span class="log-info">⬡ Processing: DigitalOcean · $26.35 USD</span>
+            </div>
+            <div class="log-line">
+              <span class="log-time">[06:32:04]</span>
+              <span class="log-muted">→ BOC rate 1.3952 · CAD $36.78</span>
+            </div>
+            <div class="log-line">
+              <span class="log-time">[06:32:04]</span>
+              <span class="log-muted">→ category: 9270 Other Business Expenses</span>
+            </div>
+            <div class="log-line">
+              <span class="log-time">[06:32:05]</span>
+              <span class="log-ok">✓ Logged · ITC $0.00 (US vendor, no GST)</span>
+            </div>
+            <div class="log-line">
+              <span class="log-time">[06:32:06]</span>
+              <span class="log-info">⬡ Processing: Telus · $84.75</span>
+            </div>
+            <div class="log-line">
+              <span class="log-time">[06:32:07]</span>
+              <span class="log-muted">→ category: 9220 Telephone &amp; Utilities</span>
+            </div>
+            <div class="log-line">
+              <span class="log-time">[06:32:07]</span>
+              <span class="log-ok">✓ Logged · ITC $3.81 (HST 13%)</span>
+            </div>
+            <div class="log-line">
+              <span class="log-time">[06:32:08]</span>
+              <span class="log-info">⬡ Processing: Shopify · $29.00</span>
+            </div>
+            <div class="log-line">
+              <span class="log-time">[06:32:09]</span>
+              <span class="log-muted">→ category: 8810 Office Expenses · SaaS &lt;$500</span>
+            </div>
+            <div class="log-line">
+              <span class="log-time">[06:32:09]</span>
+              <span class="log-ok">✓ Logged · ITC $1.45 · cycle complete <span class="cursor"></span></span>
+            </div>
+          </div>
+
+          <!-- Pipeline footer -->
+          <div class="agent-pipeline" style="margin-top:14px;">
+            <div class="pipe-step">
+              <div class="pipe-icon active">📧</div>
+              <div class="pipe-label">Gmail</div>
+            </div>
+            <div class="pipe-arrow" style="position:relative;">
+              <div class="pipe-flow"></div>
+            </div>
+            <div class="pipe-step">
+              <div class="pipe-icon active">🤖</div>
+              <div class="pipe-label">AI</div>
+            </div>
+            <div class="pipe-arrow" style="position:relative;">
+              <div class="pipe-flow" style="animation-delay:1s;"></div>
+            </div>
+            <div class="pipe-step">
+              <div class="pipe-icon active">🍁</div>
+              <div class="pipe-label">CRA</div>
+            </div>
+            <div class="pipe-arrow" style="position:relative;">
+              <div class="pipe-flow" style="animation-delay:2s;"></div>
+            </div>
+            <div class="pipe-step">
+              <div class="pipe-icon active">📊</div>
+              <div class="pipe-label">Sheets</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════
+     WORKSPACE STRIP
+══════════════════════════════════════════════════════ -->
+<div class="workspace-strip">
+  <div class="container">
+    <div class="ws-inner">
+      <span class="ws-label">Runs inside</span>
+      <div class="ws-chip"><span class="ws-chip-icon">📧</span> Gmail</div>
+      <span class="ws-divider">+</span>
+      <div class="ws-chip"><span class="ws-chip-icon">📂</span> Google Drive</div>
+      <span class="ws-divider">+</span>
+      <div class="ws-chip"><span class="ws-chip-icon">📊</span> Google Sheets</div>
+      <span class="ws-divider">×</span>
+      <div class="ws-chip"><span class="ws-chip-icon">🤖</span> Gemini 1.5 Flash</div>
+      <span class="ws-divider">or</span>
+      <div class="ws-chip"><span class="ws-chip-icon">✦</span> Claude 3.5 Sonnet</div>
+      <span class="ws-divider">=</span>
+      <div class="ws-chip" style="border-color:rgba(0,220,130,0.35);color:var(--green);">🍁 CRA T2125 ready</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════
+     FEATURES
+══════════════════════════════════════════════════════ -->
+<section class="features" id="features">
+  <div class="container">
+    <div class="features-header">
+      <div class="eyebrow">Built-in capabilities</div>
+      <h2 class="section-title">Everything baked in.<br>Nothing to configure.</h2>
+      <p class="section-sub">Not generic expense tracking. Every rule is CRA T2125-specific and verified against official sources.</p>
+    </div>
+
+    <div class="feat-grid">
+      <div class="feat-cell">
+        <span class="feat-icon">🍁</span>
+        <h3>CRA T2125 line codes</h3>
+        <p>All 22 expense categories — 8810 Office, 8523 Meals (50%), 9270 Cloud, 9281 Motor Vehicle, 9936 CCA. AI assigns the correct code on every receipt.</p>
+        <span class="feat-tag green">Verified against CRA sources</span>
+      </div>
+      <div class="feat-cell">
+        <span class="feat-icon">💵</span>
+        <h3>USD → CAD (Bank of Canada)</h3>
+        <p>Pulls the BOC noon rate for the exact receipt date. Weekend/holiday rollback included. CRA-accepted method. Rates cached to avoid repeat API calls.</p>
+        <span class="feat-tag cyan">Bank of Canada daily rates · CRA-accepted</span>
+      </div>
+      <div class="feat-cell">
+        <span class="feat-icon">🧾</span>
+        <h3>GST / HST / QST / PST</h3>
+        <p>All 13 provinces with 2026 rates. ITC calculated automatically — 50% for meals, 0% for PST, full QST for registered QC filers.</p>
+        <span class="feat-tag green">All 13 provinces</span>
+      </div>
+      <div class="feat-cell">
+        <span class="feat-icon">📧</span>
+        <h3>Gmail receipt hunter</h3>
+        <p>On setup, Gmail is automatically configured to catch receipts from 50+ known Canadian vendors — plus any email with words like "receipt", "invoice", or "order confirmation".</p>
+        <span class="feat-tag">50+ vendors pre-loaded</span>
+      </div>
+      <div class="feat-cell">
+        <span class="feat-icon">🏢</span>
+        <h3>Capital Cost Allowance</h3>
+        <p>Recognizes big purchases like computers, office furniture, and equipment that the CRA depreciates over time instead of deducting in full. Flags them for your accountant — never guesses.</p>
+        <span class="feat-tag indigo">CCA classes identified</span>
+      </div>
+      <div class="feat-cell">
+        <span class="feat-icon">🎁</span>
+        <h3>Gift & gift card CRA rules</h3>
+        <p>Three CRA buckets: client gifts, employee gifts, personal. AI flags all gift purchases for recipient classification — correct T2125 line suggested per bucket.</p>
+        <span class="feat-tag">Correct T2125 line suggested per type</span>
+      </div>
+      <div class="feat-cell">
+        <span class="feat-icon">🏠</span>
+        <h3>WFH / home office</h3>
+        <p>Home office expenses require Part 7 % calculation, not a receipt total. LoonieLog detects WFH expenses and routes them to Needs Review with the exact CRA instruction.</p>
+        <span class="feat-tag cyan">Flags for manual % calculation</span>
+      </div>
+      <div class="feat-cell">
+        <span class="feat-icon">💡</span>
+        <h3>SR&ED opportunity flag</h3>
+        <p>Passively flags cloud and dev tool expenses that may qualify for Canada's SR&ED credit (35% refundable for CCPCs). Shows potential ITC in the Dashboard.</p>
+        <span class="feat-tag green">Ask your accountant about SR&ED</span>
+      </div>
+      <div class="feat-cell">
+        <span class="feat-icon">🔁</span>
+        <h3>Dedup + annual rollover</h3>
+        <p>SHA-256 hash prevents double-processing the same receipt. Archive folder rolls to a new year each January automatically — no manual folder management needed.</p>
+        <span class="feat-tag">Same receipt never logged twice</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════
+     FOR WHO
+══════════════════════════════════════════════════════ -->
+<section class="forwho" id="for-who">
+  <div class="container">
+    <div class="forwho-header">
+      <div class="eyebrow">Who it's built for</div>
+      <h2 class="section-title">Built for people who'd rather<br><span class="grad-text">build than bookkeep</span></h2>
+      <p class="section-sub">If you file a T2125 with your T1 return, LoonieLog was made for you.</p>
+    </div>
+
+    <div class="persona-grid">
+      <div class="persona-card">
+        <span class="persona-avatar">👨‍💻</span>
+        <span class="persona-role">Freelance Developer</span>
+        <h3>Solo operator, irregular income</h3>
+        <p>You have 12 SaaS subscriptions, an AWS bill in USD, a MacBook purchase, and a Starbucks receipt from that client meeting. None of it is logged.</p>
+        <div class="persona-quote">"I lose $800/yr in missed deductions because I don't have time to log receipts."</div>
+      </div>
+      <div class="persona-card">
+        <span class="persona-avatar">🎨</span>
+        <span class="persona-role">Designer / Creator</span>
+        <h3>Sole proprietor, T2125 filer</h3>
+        <p>Adobe, Figma, Canva, printer ink, a new monitor. You know it's all deductible — but the CRA category codes are a mystery every April.</p>
+        <div class="persona-quote">"My accountant charges $80/hr to do what LoonieLog does in 5 seconds."</div>
+      </div>
+      <div class="persona-card">
+        <span class="persona-avatar">🏪</span>
+        <span class="persona-role">Small Business Owner</span>
+        <h3>GST registrant, 1–3 people</h3>
+        <p>You're registered for HST and leaving Input Tax Credit money on the table every quarter because tracking is too much work between projects.</p>
+        <div class="persona-quote">"I'm probably missing hundreds in GST credits I'm entitled to claim back."</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════
+     PRIVACY / ARCHITECTURE
+══════════════════════════════════════════════════════ -->
+<section class="privacy" id="privacy">
+  <div class="container">
+    <div class="privacy-grid">
+      <div>
+        <div class="eyebrow">Your privacy</div>
+        <h2 class="section-title">Your data never leaves<br><span class="grad-text">your Google account.</span></h2>
+        <p class="privacy-sub">
+          LoonieLog is not a cloud service. There is no LoonieLog server, no database, and no company handling your financial data. It runs entirely inside your own Google account — you stay in control at all times.
+        </p>
+        <div class="privacy-checks">
+          <div class="priv-check"><div class="priv-icon">✓</div><span>Your API key is locked securely inside your own Google account — never visible in the sheet, never on any LoonieLog server</span></div>
+          <div class="priv-check"><div class="priv-icon">✓</div><span>Receipts go directly from your Google account to your chosen AI — no LoonieLog company sees or stores anything</span></div>
+          <div class="priv-check"><div class="priv-icon">✓</div><span>LoonieLog only reads receipt-related emails — not your personal messages, contacts, or files</span></div>
+          <div class="priv-check"><div class="priv-icon">✓</div><span>A visible Activity Log in your sheet records every action the agent takes — you always see exactly what happened</span></div>
+          <div class="priv-check"><div class="priv-icon">✓</div><span>Open source — you can review every line of code before installing. Nothing hidden.</span></div>
+        </div>
+      </div>
+
+      <div class="arch-diagram">
+        <div class="arch-box locked">
+          <div class="arch-box-icon">📊</div>
+          <div><div class="arch-label">Google Sheets</div><div class="arch-sub">Your expense log lives here</div></div>
+          <div class="arch-lock">YOUR ACCOUNT</div>
+        </div>
+        <div class="arch-row" style="padding:0 8px;">
+          <div class="arch-arrow" style="flex:1;text-align:center;font-size:11px;color:var(--text-3);">reads</div>
+          <div style="width:1px;height:24px;background:var(--border);margin:0 8px;"></div>
+          <div class="arch-arrow" style="flex:1;text-align:center;font-size:11px;color:var(--text-3);">writes</div>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <div class="arch-box locked" style="flex:1;">
+            <div class="arch-box-icon">📧</div>
+            <div><div class="arch-label">Gmail</div><div class="arch-sub">Receipts only</div></div>
+          </div>
+          <div class="arch-box locked" style="flex:1;">
+            <div class="arch-box-icon">📂</div>
+            <div><div class="arch-label">Drive</div><div class="arch-sub">Receipt archive</div></div>
+          </div>
+        </div>
+        <div class="arch-divider-label" style="margin:6px 0;">↓ Encrypted connection · nothing stored by LoonieLog</div>
+        <div style="display:flex;gap:8px;">
+          <div class="arch-box arch-dashed" style="flex:1;">
+            <div class="arch-box-icon">✦</div>
+            <div><div class="arch-label" style="color:var(--text-2);">Gemini API</div><div class="arch-sub">Extracts receipt data</div></div>
+          </div>
+          <div class="arch-box arch-dashed" style="flex:1;">
+            <div class="arch-box-icon">🤖</div>
+            <div><div class="arch-label" style="color:var(--text-2);">Claude API</div><div class="arch-sub">Optional alternative</div></div>
+          </div>
+        </div>
+        <div class="arch-external-note">↑ No LoonieLog company sits between you and the AI</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════
+     PRICING
+══════════════════════════════════════════════════════ -->
+<section class="pricing" id="pricing">
+  <div class="container">
+    <div class="pricing-header">
+      <div class="eyebrow">Pricing</div>
+      <h2 class="section-title">One agent. Three ways<br>to <span class="grad-text">make it yours.</span></h2>
+      <p class="section-sub" style="margin:0 auto;">Start free. Upgrade when you're ready. All plans include every CRA rule, every province, and every receipt type.</p>
+    </div>
+
+    <div class="pricing-grid">
+
+      <!-- Micro -->
+      <div class="price-card">
+        <div class="price-tier-badge">Micro</div>
+        <div class="price-amount">$0<span class="price-period">/mo</span></div>
+        <div class="price-tagline">The digital shoebox. Zero barriers.</div>
+        <div class="price-persona">For students, hobbyists, and anyone starting out with a side hustle.</div>
+        <ul class="price-features">
+          <li><span class="pf-check">✓</span> 8 receipts per month</li>
+          <li><span class="pf-check">✓</span> All 13 provinces + CRA categories</li>
+          <li><span class="pf-check">✓</span> Bring your own Gemini API key (free tier)</li>
+          <li><span class="pf-check">✓</span> Gmail receipt scanner</li>
+          <li><span class="pf-check">✓</span> Google Drive receipt archive</li>
+          <li class="pf-muted"><span>–</span> No audit ZIP export</li>
+        </ul>
+        <a href="https://workspace.google.com/marketplace/app/loonielog" class="btn btn-ghost" style="width:100%;justify-content:center;" target="_blank">
+          Get Started Free →
+        </a>
+      </div>
+
+      <!-- Core DIY — highlighted -->
+      <div class="price-card price-card-featured">
+        <div class="price-popular-badge">Most Popular</div>
+        <div class="price-tier-badge" style="color:var(--green);">Core DIY</div>
+        <div class="price-amount">$4.99<span class="price-period">/mo</span></div>
+        <div class="price-tagline">Set it and forget it. For a coffee a month.</div>
+        <div class="price-persona">For freelance developers, designers, and digital marketers who want it automated.</div>
+        <ul class="price-features">
+          <li><span class="pf-check">✓</span> 50 receipts per month</li>
+          <li><span class="pf-check">✓</span> All 13 provinces + CRA categories</li>
+          <li><span class="pf-check">✓</span> Bring your own Gemini API key — any tier</li>
+          <li><span class="pf-check">✓</span> Auto Gmail filter injection on install</li>
+          <li><span class="pf-check">✓</span> USD → CAD conversion via Bank of Canada</li>
+          <li><span class="pf-check">✓</span> ITC + GST/HST credit tracking</li>
+        </ul>
+        <a href="#" class="btn btn-glow btn-lg" style="width:100%;justify-content:center;opacity:0.55;cursor:not-allowed;" onclick="return false;">
+          Coming Soon
+        </a>
+        <p style="font-size:11px;color:var(--text-3);text-align:center;margin-top:10px;">Join the waitlist — <a href="mailto:hello@loonielog.ca?subject=LoonieLog Core DIY Waitlist" style="color:var(--green);text-decoration:none;">hello@loonielog.ca</a></p>
+        <p style="font-size:11px;color:var(--text-3);text-align:center;margin-top:10px;">Pay → receive license key by email → install add-on → activate in one click</p>
+      </div>
+
+      <!-- Managed Pro -->
+      <div class="price-card">
+        <div class="price-tier-badge" style="color:var(--purple);">Managed Pro</div>
+        <div class="price-amount">$14.99<span class="price-period">/mo</span></div>
+        <div class="price-tagline">Never think about a receipt again.</div>
+        <div class="price-persona">For realtors, tradespeople, Uber/Skip drivers, and incorporated consultants with high receipt volumes.</div>
+        <ul class="price-features">
+          <li><span class="pf-check" style="color:var(--purple);">✓</span> <strong>Unlimited</strong> receipts per month</li>
+          <li><span class="pf-check" style="color:var(--purple);">✓</span> AI included — no API key, ever</li>
+          <li><span class="pf-check" style="color:var(--purple);">✓</span> All provinces, all CRA categories</li>
+          <li><span class="pf-check" style="color:var(--purple);">✓</span> USD conversion, ITC, CCA flagging</li>
+          <li><span class="pf-check" style="color:var(--purple);">✓</span> <strong>One-Click Audit ZIP</strong> for your accountant</li>
+          <li><span class="pf-check" style="color:var(--purple);">✓</span> Saves $200+ in year-end bookkeeping fees</li>
+        </ul>
+        <a href="#" class="btn" style="width:100%;justify-content:center;background:var(--purple-dim);color:var(--purple);border:1px solid rgba(168,85,247,0.3);opacity:0.55;cursor:not-allowed;" onclick="return false;">
+          Coming Soon
+        </a>
+        <p style="font-size:11px;color:var(--text-3);text-align:center;margin-top:10px;">Join the waitlist — <a href="mailto:hello@loonielog.ca" style="color:var(--purple);text-decoration:none;">hello@loonielog.ca</a></p>
+      </div>
+
+    </div>
+
+    <div class="pricing-note">
+      All plans: no signup required · runs inside your Google account · cancel anytime
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════
+     INSTALL
+══════════════════════════════════════════════════════ -->
+<section class="install" id="install">
+  <div class="container">
+    <div class="install-grid">
+      <div>
+        <div class="eyebrow">Get started</div>
+        <h2 class="section-title">Running in<br><span class="grad-text">under 2 minutes</span></h2>
+        <p class="install-sub">No app stores. No extensions. No coding. Just a Google Sheet with an AI agent inside it.</p>
+
+        <div class="install-steps">
+          <div class="i-step">
+            <div class="i-step-num">1</div>
+            <div class="i-step-body"><strong>Click "Install from Marketplace"</strong> below — or copy the sheet manually from Google Drive. One click installs the add-on to your Google Sheets.</div>
+          </div>
+          <div class="i-step">
+            <div class="i-step-num">2</div>
+            <div class="i-step-body"><strong>Get a free Gemini API key</strong> from Google AI Studio (generous free tier). Or use a Claude key from Anthropic if you prefer.</div>
+          </div>
+          <div class="i-step">
+            <div class="i-step-num">3</div>
+            <div class="i-step-body"><strong>Open 🚀 LoonieLog → Initialize Agent</strong> from the sheet menu. Paste your key, select your province, click Activate.</div>
+          </div>
+          <div class="i-step">
+            <div class="i-step-num">4</div>
+            <div class="i-step-body"><strong>The agent goes live.</strong> Gmail filters are injected, Drive folders created, daily trigger scheduled. First scan runs in 24 hours — or hit Run Now.</div>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:14px;">
+          <!-- TODO: Replace 1VCnk8SgKQVFiGO0kbTxlBA12fgF8Z8Ujlzx-2SWnmAI with your published Google Sheets template ID before launch -->
+          <a href="https://docs.google.com/spreadsheets/d/1VCnk8SgKQVFiGO0kbTxlBA12fgF8Z8Ujlzx-2SWnmAI/copy" class="btn btn-glow btn-xl" target="_blank">
+            📥 Copy to Google Sheets — Free
+          </a>
+          <span style="font-size:12px;color:var(--text-3);display:flex;align-items:center;gap:6px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z" fill="currentColor"/></svg>
+            Marketplace listing coming soon
+          </span>
+        </div>
+        <p class="install-note">Free · No signup · Works with any Google account · Requires a Gemini or Claude API key.</p>
+        <div style="margin-top:12px;padding:10px 14px;background:var(--bg-card);border:1px solid var(--border);border-radius:10px;font-size:12px;color:var(--text-3);line-height:1.6;">
+          <strong style="color:var(--text-2);">Marketplace install</strong> automatically adds LoonieLog to your Google Sheets and keeps it updated. The manual sheet copy is for those who prefer to inspect or self-host the code.
+        </div>
+      </div>
+
+      <div class="req-panel">
+        <div class="req-panel-header">
+          <span style="color:var(--green);">▸</span> System requirements
+        </div>
+        <div class="req-item">
+          <div class="req-icon">🔵</div>
+          <div class="req-text">
+            <strong>Google Account</strong>
+            <span>Gmail + Drive + Sheets · any free account works</span>
+          </div>
+          <div class="req-check">✓</div>
+        </div>
+        <div class="req-item">
+          <div class="req-icon">🤖</div>
+          <div class="req-text">
+            <strong>AI API Key</strong>
+            <span>Gemini (free tier) or Claude (Anthropic)</span>
+          </div>
+          <div class="req-check">✓</div>
+        </div>
+        <div class="req-item">
+          <div class="req-icon">🇨🇦</div>
+          <div class="req-text">
+            <strong>Canadian tax filer</strong>
+            <span>Sole proprietor filing T2125 with T1</span>
+          </div>
+          <div class="req-check">✓</div>
+        </div>
+        <div class="req-item">
+          <div class="req-icon">⏱️</div>
+          <div class="req-text">
+            <strong>2 minutes setup time</strong>
+            <span>Then it runs itself forever</span>
+          </div>
+          <div class="req-check amber">←</div>
+        </div>
+        <div class="req-item" style="background:var(--green-dim);border-top:1px solid rgba(0,220,130,0.2);">
+          <div class="req-icon">🚫</div>
+          <div class="req-text">
+            <strong>No server needed</strong>
+            <span>No app install · no subscription · no data exposure</span>
+          </div>
+          <div class="req-check">✓</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════
+     CTA
+══════════════════════════════════════════════════════ -->
+<section class="cta-section">
+  <div class="cta-glow"></div>
+  <div class="container" style="position:relative;z-index:1;">
+    <div class="badge badge-green" style="margin-bottom:24px;">🍁 Built for Canadian freelancers</div>
+    <h2>Stop losing money to<br><span class="grad-text">missed deductions</span></h2>
+    <p>The average Canadian freelancer misses $1,200+ in deductions each year.<br>LoonieLog's agent catches them while you sleep.</p>
+    <div class="cta-btns">
+      <a href="https://docs.google.com/spreadsheets/d/1VCnk8SgKQVFiGO0kbTxlBA12fgF8Z8Ujlzx-2SWnmAI/copy" class="btn btn-glow btn-xl" target="_blank">
+        📥 Copy to Google Sheets — Free →
+      </a>
+      <a href="mailto:hello@loonielog.ca" class="btn btn-ghost btn-lg">
+        ✉ Contact Us
+      </a>
+    </div>
+    <p class="cta-note">No signup. No credit card. Copies directly into your Google Drive.</p>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════
+     FAQ
+══════════════════════════════════════════════════════ -->
+<section class="faq" id="faq">
+  <div class="container">
+    <div class="faq-header">
+      <div class="eyebrow">FAQ</div>
+      <h2 class="section-title">Common questions</h2>
+      <p class="section-sub">Everything you need before you install.</p>
+    </div>
+    <div class="faq-grid">
+      <div class="faq-item">
+        <div class="faq-q">Is it really free?</div>
+        <div class="faq-a">LoonieLog is free to download and use. You need a Google account (free) and a Gemini API key — which has a generous free tier. Claude costs a few cents per month at typical receipt volumes.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Does it work for all provinces?</div>
+        <div class="faq-a">Yes — all 13 provinces and territories, with verified 2026 rates. HST provinces, QST for Quebec, and GST-only provinces like Alberta and Yukon are all handled correctly.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">What if the AI gets a category wrong?</div>
+        <div class="faq-a">Every row has a CRA Category dropdown you can change with one click. Low-confidence extractions are automatically routed to a "Needs Review" tab and highlighted.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">What happens to my API key?</div>
+        <div class="faq-a">Your key is stored inside Google's secure, encrypted storage — the same infrastructure Google uses to protect your account settings. It never appears in your sheet and is never sent to any LoonieLog server (there isn't one).</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Does it handle USD receipts?</div>
+        <div class="faq-a">Yes. It fetches the Bank of Canada noon rate for the receipt date and converts everything to CAD — the CRA-accepted method. Original USD amount and rate are stored in separate columns.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Can I use it for a corporation (T2)?</div>
+        <div class="faq-a">LoonieLog is optimized for sole proprietors filing T2125 with their T1 return. Corporate T2 filers have different requirements and a different filing structure.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">How does it find my old receipts?</div>
+        <div class="faq-a">The Dashboard has a "Hunt Past Receipts" button that searches Gmail for the past 90 days using receipt keywords — catching everything you missed before installing.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Is it open source?</div>
+        <div class="faq-a">Yes — all code is visible directly inside your Google Sheet's script editor. You can read every line before you install. Nothing is hidden or obfuscated.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════
+     FOOTER
+══════════════════════════════════════════════════════ -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="logo" style="margin-bottom:12px;">
+          <div class="logo-mark">L</div>
+          <span class="logo-name" style="font-size:17px;">Loonie<span>Log</span></span>
+        </div>
+        <p>A mini AI agent that lives in Google Sheets and does your Canadian taxes while you sleep.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Product</h4>
+        <ul>
+          <li><a href="#pricing">Pricing</a></li>
+          <li><a href="#features">Features</a></li>
+          <li><a href="#install">Install</a></li>
+          <li><a href="#" style="opacity:0.4;cursor:default;" title="Coming soon">Marketplace (soon)</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Resources</h4>
+        <ul>
+          <li><a href="https://www.canada.ca/en/revenue-agency/services/forms-publications/forms/t2125.html" target="_blank">CRA T2125 ↗</a></li>
+          <li><a href="https://aistudio.google.com/app/apikey" target="_blank">Gemini API Key ↗</a></li>
+          <li><a href="https://console.anthropic.com/account/keys" target="_blank">Claude API Key ↗</a></li>
+          <li><a href="https://www.bankofcanada.ca/rates/exchange/" target="_blank">BOC Rates ↗</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Legal</h4>
+        <ul>
+          <li><a href="privacy.html">Privacy Policy</a></li>
+          <li><a href="terms.html">Terms of Service</a></li>
+          <li><a href="mailto:hello@loonielog.ca">Support</a></li>
+          <li><a href="#" style="opacity:0.4;cursor:default;" title="Coming soon">Marketplace (soon)</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-copy">© 2026 LoonieLog · Built with 🍁 in Canada · Not affiliated with CRA</span>
+      <div class="footer-flags">
+        <span>🇨🇦 CRA compliant</span>
+        <span class="dot"></span>
+        <span>🔒 Your data stays with you</span>
+        <span class="dot"></span>
+        <span>🛡 No LoonieLog server</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+</body>
+</html>
