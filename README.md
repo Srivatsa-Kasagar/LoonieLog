@@ -2,7 +2,7 @@
 
 **AI-powered expense tracking for Canadian freelancers — built inside Google Sheets.**
 
-> 🌐 **[loonielog.ca](https://loonielog.ca)** — full demo, features, and pricing
+> 🌐 **[loonielog.ca](https://srivatsa-kasagar.github.io/LoonieLog)** — full demo, features, and pricing
 
 LoonieLog is a Google Sheets add-on that acts as a mini AI agent. It hunts receipts from your Gmail and Google Drive, extracts CRA T2125 data using AI, applies Canadian tax rules automatically, and logs everything to a spreadsheet — while you sleep.
 
@@ -80,7 +80,7 @@ Your API key is stored in Google's `PropertiesService` — never in the sheet, n
 
 **Free to get started** — no credit card, no signup, works with your existing Google account.
 
-Paid plans available for higher volumes. → **[See pricing at loonielog.ca](https://loonielog.ca/#pricing)**
+Paid plans available for higher volumes. → **[See pricing at loonielog.ca](https://srivatsa-kasagar.github.io/LoonieLog/#pricing)**
 
 ---
 
@@ -89,7 +89,7 @@ Paid plans available for higher volumes. → **[See pricing at loonielog.ca](htt
 - Your receipt data never leaves your Google account
 - AI providers (Google / Anthropic) receive only the receipt content — no names, account numbers, or personal identifiers beyond what's on the receipt itself
 - No external database — everything lives in your own Google Sheet and Drive
-- Full details: [loonielog.ca/privacy.html](https://loonielog.ca/privacy.html)
+- Full details: [loonielog.ca/privacy.html](https://srivatsa-kasagar.github.io/LoonieLog/privacy.html)
 
 ---
 
