@@ -4,7 +4,7 @@
 
 > Stop losing receipts. Stop missing deductions. Stop paying your accountant to sort through your Gmail.
 
-**[→ Get Started Free](https://docs.google.com/spreadsheets/d/1VCnk8SgKQVFiGO0kbTxlBA12fgF8Z8Ujlzx-2SWnmAI/copy)** · **[Full Demo & Pricing](https://srivatsa-kasagar.github.io/LoonieLog)**
+**[→ Get Started Free](https://docs.google.com/spreadsheets/d/1VCnk8SgKQVFiGO0kbTxlBA12fgF8Z8Ujlzx-2SWnmAI/copy)** · **[Full Demo & Pricing](https://loonielog.ca)**
 
 ---
 
@@ -54,7 +54,7 @@ LoonieLog is an AI agent that lives inside your Google Sheets. It hunts your rec
 - Everything lives in **your** Google Sheet and Drive — no external database
 - AI providers receive only receipt content — no names, account numbers, or identifiers
 - API keys stored in Google's encrypted `PropertiesService` — never in the sheet
-- Full details: [Privacy Policy](https://srivatsa-kasagar.github.io/LoonieLog/privacy.html)
+- Full details: [Privacy Policy](https://loonielog.ca/privacy.html)
 
 ---
 
@@ -106,7 +106,7 @@ Hosting   → GitHub Pages (this landing page)
 **Free to start** — no credit card, no signup, works with your existing Google account.
 
 Paid plans available for higher volumes and upcoming managed hosting.
-→ [See pricing](https://srivatsa-kasagar.github.io/LoonieLog/#pricing)
+→ [See pricing](https://loonielog.ca/#pricing)
 
 ---
 
